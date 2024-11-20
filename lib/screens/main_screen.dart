@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nutrition_ai_app/controllers/user/user_controller.dart';
 import 'package:nutrition_ai_app/screens/screens.dart';
 import 'package:nutrition_ai_app/shared/navbar2.dart';
 
-class MainScreen extends StatefulWidget {
+class MainScreen extends ConsumerStatefulWidget {
   static const String name = 'main_screen';
 
   const MainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  MainScreenState createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class MainScreenState extends ConsumerState<MainScreen> {
+  final UserController _con = UserController();
   int _selectedIndex = 0; // Mantiene el índice del tab seleccionado
 
   // Cambiar la pestaña seleccionada
@@ -30,7 +34,16 @@ class _MainScreenState extends State<MainScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _con.init(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    _con.getUserProfile(ref);
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);

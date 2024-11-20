@@ -167,7 +167,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
             Expanded(
               child: ListView.separated(
                 itemCount: _mealFoods.length,
-                separatorBuilder: (context, index) => Divider(),
+                separatorBuilder: (context, index) => const Divider(),
                 itemBuilder: (context, index) {
                   return _buildFoodItem(
                     _mealFoods[index]['image']!,
@@ -241,7 +241,7 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  '$value',
+                  value,
                   style: const TextStyle(color: Colors.black54),
                 ),
               ],

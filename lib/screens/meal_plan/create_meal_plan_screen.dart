@@ -20,7 +20,7 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
   int _selectedDays = 3; // Inicialmente seleccionamos 3 días
 
   final ScrollController _scrollController = ScrollController();
-  Color _appBarColor = Colors.white; 
+  Color _appBarColor = Colors.white;
   Color _textColor = Colors.black;
   Color _iconColor = MyColors.primaryColor;
   Color _iconBackgroundColor = MyColors.primarySwatch[50]!;

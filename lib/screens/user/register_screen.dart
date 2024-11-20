@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:nutrition_ai_app/controllers/auth/register_controller.dart';
 import 'package:nutrition_ai_app/screens/screens.dart';
 
-// import '../../controllers/customer/customer_controller.dart';
 import '../../config/theme/my_colors.dart';
 
 class UserRegisterScreen extends StatefulWidget {
@@ -17,7 +18,7 @@ class UserRegisterScreen extends StatefulWidget {
 }
 
 class _UserRegisterScreenState extends State<UserRegisterScreen> {
-  // final CustomerController _con = CustomerController();
+  final RegisterController _con = RegisterController();
 
   @override
   void initState() {
@@ -25,7 +26,7 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
 
     // Se ejecuta despues del metodo build
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      // _con.init(context, refresh);
+      _con.init(context, refresh);
     });
   }
 
@@ -45,7 +46,6 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
               _textFieldEmail(),
               _textFieldPhone(),
               _textFieldPassword(),
-              // _textFieldConfirmPassword(),
               _buttonRegister(),
               _textHaveAccount(),
               const SizedBox(height: 40),
@@ -147,20 +147,6 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
     );
   }
 
-  // Widget _imageUser() {
-  //   return GestureDetector(
-  //     // onTap: _con.showAlertDialog,
-  //     child: CircleAvatar(
-  //       // backgroundImage: _con.imageFile != null
-  //       //   ? FileImage(_con.imageFile!)
-  //       //   : const AssetImage('assets/img/user_profile.png') as ImageProvider<Object>?,
-
-  //       backgroundColor: Colors.grey[200],
-  //       radius: 60,
-  //     ),
-  //   );
-  // }
-
   Widget _textFieldEmail() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 35, vertical: 5),
@@ -169,18 +155,20 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
-        // controller: _con.emailController,
+        controller: _con.emailController,
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
-          // labelText: 'Email',
           hintText: 'Correo electrónico',
           hintStyle: TextStyle(color: MyColors.primaryColorDark),
           prefixIcon: Icon(
-            Icons.email_outlined,
+            Iconsax.sms,
             color: MyColors.primarySwatch,
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(15),
+        ),
+        style: TextStyle(
+          color: MyColors.primaryColorDark,
         ),
       ),
     );
@@ -194,12 +182,12 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
-        // controller: _con.nameController,
+        controller: _con.nameController,
         decoration: InputDecoration(
           hintText: 'Nombre',
           hintStyle: TextStyle(color: MyColors.primaryColorDark),
           prefixIcon: Icon(
-            Icons.person_2_outlined,
+            Iconsax.user,
             color: MyColors.primarySwatch,
           ),
           border: InputBorder.none,
@@ -220,12 +208,12 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
-        // controller: _con.surnameController,
+        controller: _con.lastnameController,
         decoration: InputDecoration(
           hintText: 'Apellido',
           hintStyle: TextStyle(color: MyColors.primaryColorDark),
           prefixIcon: Icon(
-            Icons.person_2_outlined,
+            Iconsax.user,
             color: MyColors.primarySwatch,
           ),
           border: InputBorder.none,
@@ -246,13 +234,13 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
-        // controller: _con.phoneController,
+        controller: _con.phoneController,
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
           hintText: 'Telefono',
           hintStyle: TextStyle(color: MyColors.primaryColorDark),
           prefixIcon: Icon(
-            Icons.phone_android_outlined,
+            Iconsax.mobile,
             color: MyColors.primarySwatch,
           ),
           border: InputBorder.none,
@@ -273,40 +261,13 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
-        // controller: _con.passwordController,
+        controller: _con.passwordController,
         obscureText: true,
         decoration: InputDecoration(
           hintText: 'Contraseña',
           hintStyle: TextStyle(color: MyColors.primaryColorDark),
           prefixIcon: Icon(
-            Icons.lock_outline,
-            color: MyColors.primarySwatch,
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.all(15),
-        ),
-        style: TextStyle(
-          color: MyColors.primaryColorDark,
-        ),
-      ),
-    );
-  }
-
-  Widget _textFieldConfirmPassword() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 35, vertical: 5),
-      decoration: BoxDecoration(
-        color: MyColors.primarySwatch[50],
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: TextField(
-        // controller: _con.confirmPasswordController,
-        obscureText: true,
-        decoration: InputDecoration(
-          hintText: 'Confirmar contraseña',
-          hintStyle: TextStyle(color: MyColors.primaryColorDark),
-          prefixIcon: Icon(
-            Icons.lock_outline,
+            Iconsax.lock_1,
             color: MyColors.primarySwatch,
           ),
           border: InputBorder.none,
@@ -342,7 +303,10 @@ class _UserRegisterScreenState extends State<UserRegisterScreen> {
       child: ElevatedButton(
         onPressed: () {
           // logica para guardar el usuario
-          context.pushNamed(RegisterProfileScreen.name);
+          _con.register(context);
+          // context.pushNamed(RegisterProfileScreen.name, extra: {
+          //   'user_id': 1,
+          // });
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,

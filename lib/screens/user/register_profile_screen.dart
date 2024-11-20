@@ -4,32 +4,55 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:nutrition_ai_app/screens/screens.dart';
+import 'package:nutrition_ai_app/controllers/auth/register_controller.dart';
 
 import '../../config/theme/my_colors.dart';
 
 class RegisterProfileScreen extends StatefulWidget {
   static const String name = 'register_profile_screen';
 
-  const RegisterProfileScreen({super.key});
+  final int userId;
+
+  const RegisterProfileScreen({super.key, required this.userId});
 
   @override
   State<RegisterProfileScreen> createState() => _RegisterProfileScreenState();
 }
 
 class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
-  String? _selectedGender;
-  DateTime? _selectedDate;
+  final RegisterController _con = RegisterController();
 
   // Lista de opciones de género
   final List<String> _genderOptions = ['Masculino', 'Femenino', 'Otro'];
+
+  // Lista de opciones de actividad física
+  final List<String> _physicalActivities = [
+    'Sedentario',
+    'Ligero',
+    'Moderado',
+    'Activo',
+    'Muy activo',
+  ];
+
+  // Lista de restricciones
+  final List<String> _restrictions = [
+    'Ninguna',
+    'Diabetes',
+    'Hipertensión',
+    'Colesterol alto',
+    'Otro',
+  ];
 
   @override
   void initState() {
     super.initState();
 
+    print('User ID: ${widget.userId}');
+
     // Se ejecuta despues del metodo build
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {});
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _con.init(context, refresh);
+    });
   }
 
   @override
@@ -44,9 +67,11 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
               _imageBanner(),
               _textRegister(),
               _textFieldGender(),
+              _textFieldPhysicalActivity(),
               _textFieldBirthday(),
               _textFieldWeight(),
               _textFieldHeight(),
+              _buildRestrictionSelector(),
               _buttonConfirm(),
               const SizedBox(height: 40),
             ],
@@ -211,7 +236,7 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
             color: MyColors.primaryColorDark,
           ),
         ),
-        value: _selectedGender,
+        value: _con.selectedGender,
         focusColor: Colors.transparent,
         borderRadius: BorderRadius.circular(15),
         decoration: InputDecoration(
@@ -241,7 +266,7 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
         }).toList(),
         onChanged: (newValue) {
           setState(() {
-            _selectedGender = newValue;
+            _con.selectedGender = newValue;
           });
         },
         validator: (value) =>
@@ -249,6 +274,147 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
       ),
     );
   }
+  
+  Widget _textFieldPhysicalActivity() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 35, vertical: 5),
+      decoration: BoxDecoration(
+        color: MyColors.primarySwatch[50],
+        borderRadius: BorderRadius.circular(15),
+      ),
+      child: DropdownButtonFormField<String>(
+        hint: Text(
+          'Nivel de Actividad física',
+          style: TextStyle(
+            color: MyColors.primaryColorDark,
+          ),
+        ),
+        value: _con.selectedActivity,
+        focusColor: Colors.transparent,
+        borderRadius: BorderRadius.circular(15),
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            Iconsax.timer_1,
+            color: MyColors.primarySwatch,
+          ),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.all(15),
+        ),
+        items: _physicalActivities.map((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Container(
+              margin: const EdgeInsets.only(left: 10, right: 10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Text(
+                value,
+                style: TextStyle(
+                  color: MyColors.primaryColorDark,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+        onChanged: (newValue) {
+          setState(() {
+            _con.selectedActivity = newValue;
+          });
+        },
+        validator: (value) =>
+            value == null ? 'Por favor selecciona un actividad' : null,
+      ),
+    );
+  }
+
+  Widget _buildRestrictionSelector() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 35, vertical: 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Selecciona tu restricción:',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: MyColors.primaryColorDark,
+              // fontFamily: 'Viga',
+            ),
+          ),
+          const SizedBox(height: 10),
+          ..._restrictions.map((String value) {
+            return RadioListTile<String>(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              dense: true,
+              fillColor: WidgetStateProperty.all(MyColors.primarySwatch[600]),
+              overlayColor:
+                  WidgetStateProperty.all(MyColors.primarySwatch[100]),
+              hoverColor: MyColors.primarySwatch[100],
+              title: Text(
+                value,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: MyColors.textColorPrimary,
+                ),
+              ),
+              value: value,
+              groupValue: _con.selectedRestriction,
+              onChanged: (value) {
+                setState(() {
+                  _con.selectedRestriction = value ?? '';
+                  _con.showCustomRestrictionField = _con.selectedRestriction == 'Otro';
+                });
+              },
+            );
+          }),
+          if (_con.showCustomRestrictionField) ...[
+            const SizedBox(height: 10),
+            TextField(
+              controller: _con.customRestrictionController,
+              minLines: 2,
+              maxLines: 5,
+              style: TextStyle(
+                color: MyColors.textColorPrimary,
+              ),
+              decoration: InputDecoration(
+                alignLabelWithHint: true,
+                labelStyle: TextStyle(
+                  color: MyColors.textColorPrimary,
+                ),
+                floatingLabelStyle: TextStyle(
+                  color: MyColors.primarySwatch[600],
+                ),
+                labelText: 'Escribe tu restricción',
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  borderSide: BorderSide(
+                    color: MyColors.primarySwatch[600]!,
+                  ),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  borderSide: BorderSide(
+                    color: MyColors.primarySwatch[600]!,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5),
+                  borderSide: BorderSide(
+                    color: MyColors.primarySwatch[600]!,
+                  ),
+                ),
+              ),
+            ),
+          ]
+        ],
+      ),
+    );
+  }
+
 
   Widget _textFieldBirthday() {
     return GestureDetector(
@@ -262,9 +428,9 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
         child: AbsorbPointer(
           child: TextFormField(
             decoration: InputDecoration(
-              hintText: _selectedDate == null
+              hintText: _con.selectedDate == null
                   ? 'Fecha de nacimiento'
-                  : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+                  : '${_con.selectedDate!.day}/${_con.selectedDate!.month}/${_con.selectedDate!.year}',
               hintStyle: TextStyle(color: MyColors.primaryColorDark),
               prefixIcon: Icon(
                 Iconsax.calendar_1,
@@ -277,7 +443,7 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
               color: MyColors.primaryColorDark,
             ),
             validator: (value) =>
-                _selectedDate == null ? 'Por favor selecciona una fecha' : null,
+                _con.selectedDate == null ? 'Por favor selecciona una fecha' : null,
           ),
         ),
       ),
@@ -297,6 +463,7 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
                 borderRadius: BorderRadius.circular(15),
               ),
               child: TextFormField(
+                controller: _con.weightController,
                 decoration: InputDecoration(
                   hintText: 'Peso',
                   hintStyle: TextStyle(color: MyColors.primaryColorDark),
@@ -368,6 +535,7 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
                 borderRadius: BorderRadius.circular(15),
               ),
               child: TextFormField(
+                controller: _con.heightController,
                 decoration: InputDecoration(
                   hintText: 'Altura',
                   hintStyle: TextStyle(color: MyColors.primaryColorDark),
@@ -446,7 +614,8 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
       ),
       child: ElevatedButton(
         onPressed: () {
-          context.goNamed(LoginScreen.name);
+          _con.registerProfile(context, widget.userId);
+          // context.goNamed(LoginScreen.name);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
@@ -491,9 +660,9 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
       },
     );
 
-    if (picked != null && picked != _selectedDate) {
+    if (picked != null && picked != _con.selectedDate) {
       setState(() {
-        _selectedDate = picked;
+        _con.selectedDate = picked;
       });
     }
   }

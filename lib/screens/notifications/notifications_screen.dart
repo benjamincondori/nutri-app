@@ -6,7 +6,7 @@ import '../../shared/appbar_with_back.dart';
 class NotificationsScreen extends StatefulWidget {
   static const String name = 'notifications_screen';
 
-  NotificationsScreen({super.key});
+  const NotificationsScreen({super.key});
 
   @override
   State<NotificationsScreen> createState() => _NotificationsScreenState();

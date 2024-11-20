@@ -1,25 +1,27 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:nutrition_ai_app/config/theme/my_colors.dart';
 
+import '../../providers/user_provider.dart';
 import '../../shared/appbar_with_back.dart';
 import '../../shared/card_with_links.dart';
+import '../../shared/utils/shared_pref.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  ProfileScreenState createState() => ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  String userName = 'Benjamin Condori Vasquez';
-  String profileImageUrl =
-      "https://img.lovepik.com/png/20231128/3d-illustration-avatar-profile-man-collection-guy-cheerful_716220_wh860.png";
-  double height = 170.0;
-  double weight = 65.0;
-  int age = 25;
+class ProfileScreenState extends ConsumerState<ProfileScreen> {
+  // String userName = 'Benjamin Condori Vasquez';
+  // String profileImageUrl =
+  //     "https://img.lovepik.com/png/20231128/3d-illustration-avatar-profile-man-collection-guy-cheerful_716220_wh860.png";
+  // double height = 170.0;
+  // double weight = 65.0;
+  // int age = 25;
 
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white; // Color inicial del AppBar
@@ -58,6 +60,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+
+    String userName =
+        user != null ? '${user.name} ${user.lastname}' : 'Usuario';
+    String profileImageUrl = user != null
+        ? user.urlImage
+        : "https://img.lovepik.com/png/20231128/3d-illustration-avatar-profile-man-collection-guy-cheerful_716220_wh860.png";
+    double height = user != null ? user.healthProfile.height : 170.0;
+    double weight = user != null ? user.healthProfile.weight : 65.0;
+    int age = user != null ? user.healthProfile.age : 25;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBarWithBack(
@@ -74,10 +87,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _profileImage(),
+            _profileImage(profileImageUrl),
             const SizedBox(height: 8),
-            _profileName(),
-            _profileInfoHealth(),
+            _profileName(userName),
+            _profileInfoHealth(height, weight, age),
             const SizedBox(height: 15),
             _profileAccount(),
             const SizedBox(height: 30),
@@ -91,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _profileImage() {
+  Widget _profileImage(String profileImageUrl) {
     return Container(
       alignment: Alignment.center,
       margin: const EdgeInsets.only(top: 30),
@@ -122,12 +135,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _profileName() {
+  Widget _profileName(String name) {
     return Container(
       alignment: Alignment.center,
       margin: const EdgeInsets.symmetric(horizontal: 30),
       child: Text(
-        userName,
+        name,
         style: const TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -139,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _profileInfoHealth() {
+  Widget _profileInfoHealth(double height, double weight, int age) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
       child: Row(
@@ -331,7 +344,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           OptionItem(
             icon: Icons.logout,
             title: 'Cerrar Sesión',
-            link: '/logout',
+            onTap: () async {
+              // Ejecuta el método de cierre de sesión
+              SharedPref().logout(context);
+            },
           ),
         ],
       ),

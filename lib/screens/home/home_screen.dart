@@ -1,23 +1,24 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../config/theme/my_colors.dart';
+import '../../providers/user_provider.dart';
 import '../../shared/appbar.dart';
-import '../meal_plan/create_meal_plan_screen.dart';
 import '../screens.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   static const String name = 'home_screen';
 
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class HomeScreenState extends ConsumerState<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white; // Color inicial del AppBar
   Color _textColor = Colors.black;
@@ -74,12 +75,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(userProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        userName: 'Benjamin Condori Vasquez',
-        profileImageUrl:
-            'https://img.lovepik.com/png/20231128/3d-illustration-avatar-profile-man-collection-guy-cheerful_716220_wh860.png',
+        userName: '${user?.name} ${user?.lastname}',
+        profileImageUrl: user?.urlImage ?? 'https://img.lovepik.com/png/20231128/3d-illustration-avatar-profile-man-collection-guy-cheerful_716220_wh860.png',
         backgroundColor: _appBarColor,
         textColor: _textColor,
         iconColor: _iconColor,

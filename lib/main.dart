@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nutrition_ai_app/config/router/app_router.dart';
 import 'package:nutrition_ai_app/config/theme/app_theme.dart';
-
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
 
-  // runApp(
-  //   const ProviderScope(child: MainApp() )
-  // );
-  
-  runApp(const MainApp());
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:nutrition_ai_app/config/theme/my_colors.dart';
-import 'package:nutrition_ai_app/screens/login/login_screen.dart';
+import 'package:nutrition_ai_app/controllers/user/user_controller.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   static const String name = 'splash_screen';
 
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  SplashScreenState createState() => SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class SplashScreenState extends ConsumerState<SplashScreen> {
+  final UserController _con = UserController();
   double _opacity = 0.0; // Controla la opacidad para la animación
 
   @override
@@ -21,7 +23,11 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     _startAnimation(); // Inicia la animación
     _startSplashScreenTimer(); // Navega después de la animación
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _con.init(context);
+    });
   }
+  
 
   // Controla la navegación después del splash
   void _startSplashScreenTimer() async {
@@ -39,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
         milliseconds: 400,
       ),
       () {
-        context.pushReplacementNamed(LoginScreen.name);
+        _con.checkAuthSession(ref);
       },
     );
   }

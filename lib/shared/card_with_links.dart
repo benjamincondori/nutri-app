@@ -51,7 +51,14 @@ class CustomCardWithLinks extends StatelessWidget {
               children: options.map((option) {
                 return InkWell(
                   borderRadius: BorderRadius.circular(10),
-                  onTap: () {},
+                  onTap: () {
+                    if (option.onTap != null) {
+                      option.onTap!(); 
+                    } else if (option.link != null) {
+                      // Navega a la ruta definida
+                      // context.pushNamed(option.link!);
+                    }
+                  },
                   splashColor: MyColors.primarySwatch[50],
                   highlightColor: MyColors.primarySwatch[50],
                   focusColor: MyColors.primarySwatch[50],
@@ -90,11 +97,13 @@ class CustomCardWithLinks extends StatelessWidget {
 class OptionItem {
   final IconData icon;
   final String title;
-  final String link;
+  final String? link;
+  final VoidCallback? onTap;
 
   OptionItem({
     required this.icon,
     required this.title,
-    required this.link,
+    this.link,
+    this.onTap,
   });
 }

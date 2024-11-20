@@ -32,7 +32,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/user-profile',
       name: RegisterProfileScreen.name,
-      builder: (context, state) => const RegisterProfileScreen(),
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return RegisterProfileScreen(
+          userId: extra['user_id'] as int,
+        );
+      },
     ),
     GoRoute(
       path: '/meal-plan/create',

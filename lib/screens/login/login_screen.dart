@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:nutrition_ai_app/controllers/auth/login_controller.dart';
 import 'package:nutrition_ai_app/screens/screens.dart';
 import 'package:nutrition_ai_app/config/theme/my_colors.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   static const String name = 'login_screen';
 
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  // final LoginController _con = LoginController();
+class LoginScreenState extends ConsumerState<LoginScreen> {
+  final LoginController _con = LoginController();
 
   @override
   void initState() {
@@ -23,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // Se ejecuta despues del metodo build
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      // _con.init(context);
+      _con.init(context, ref);
     });
   }
 
@@ -124,19 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // Widget _iconBack() {
-  //   return IconButton(
-  //     // onPressed: _con.back,
-  //     onPressed: () {
-  //       Navigator.pop(context);
-  //     },
-  //     icon: const Icon(
-  //       Icons.arrow_back_ios,
-  //       color: Colors.white,
-  //     ),
-  //   );
-  // }
-
   Widget _textFieldEmail() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 35, vertical: 5),
@@ -145,13 +135,13 @@ class _LoginScreenState extends State<LoginScreen> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
-        // controller: _con.emailController,
+        controller: _con.emailController,
         keyboardType: TextInputType.emailAddress,
         decoration: InputDecoration(
           hintText: 'Correo electrónico',
           hintStyle: TextStyle(color: MyColors.primarySwatch[600]),
           prefixIcon: Icon(
-            Icons.email_outlined,
+            Iconsax.sms,
             color: MyColors.primarySwatch,
           ),
           border: InputBorder.none,
@@ -172,13 +162,13 @@ class _LoginScreenState extends State<LoginScreen> {
         borderRadius: BorderRadius.circular(15),
       ),
       child: TextField(
-        // controller: _con.passwordController,
+        controller: _con.passwordController,
         obscureText: true,
         decoration: InputDecoration(
           hintText: 'Contraseña',
           hintStyle: TextStyle(color: MyColors.primarySwatch[600]),
           prefixIcon: Icon(
-            Icons.lock_outline,
+            Iconsax.lock_1,
             color: MyColors.primarySwatch,
           ),
           border: InputBorder.none,
@@ -213,7 +203,8 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       child: ElevatedButton(
         onPressed: () {
-          context.goNamed(MainScreen.name);
+          _con.login(context);
+          // context.goNamed(MainScreen.name);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
