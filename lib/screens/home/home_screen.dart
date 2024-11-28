@@ -183,45 +183,45 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildWaterProgressChart() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Agua Bebida",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 200,
-          child: BarChart(
-            BarChartData(
-              barGroups: [
-                BarChartGroupData(x: 0, barRods: [
-                  BarChartRodData(
-                    toY: 8, // Progreso en litros
-                    color: Colors.blue,
-                    width: 20,
-                  ),
-                ]),
-                BarChartGroupData(x: 1, barRods: [
-                  BarChartRodData(
-                    toY: 12, // Objetivo en litros
-                    color: Colors.grey[300]!,
-                    width: 20,
-                  ),
-                ]),
-              ],
-              titlesData: FlTitlesData(show: false),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildWaterProgressChart() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       const Text(
+  //         "Agua Bebida",
+  //         style: TextStyle(
+  //           fontSize: 18,
+  //           fontWeight: FontWeight.bold,
+  //         ),
+  //       ),
+  //       const SizedBox(height: 10),
+  //       SizedBox(
+  //         height: 200,
+  //         child: BarChart(
+  //           BarChartData(
+  //             barGroups: [
+  //               BarChartGroupData(x: 0, barRods: [
+  //                 BarChartRodData(
+  //                   toY: 8, // Progreso en litros
+  //                   color: Colors.blue,
+  //                   width: 20,
+  //                 ),
+  //               ]),
+  //               BarChartGroupData(x: 1, barRods: [
+  //                 BarChartRodData(
+  //                   toY: 12, // Objetivo en litros
+  //                   color: Colors.grey[300]!,
+  //                   width: 20,
+  //                 ),
+  //               ]),
+  //             ],
+  //             titlesData: FlTitlesData(show: false),
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _buildMealPlan() {
     return Column(
@@ -351,48 +351,48 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildRecipeSuggestions() {
-    return Column(
-      children: [
-        const Text(
-          "Sugerencias de Recetas:",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Viga',
-          ),
-        ),
-        const SizedBox(height: 10),
-        Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ListTile(
-            leading: const Icon(Icons.restaurant),
-            title: const Text('Ensalada Mediterránea'),
-            onTap: () {
-              // Acción para ver receta
-            },
-          ),
-        ),
-        const SizedBox(height: 10),
-        Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ListTile(
-            leading: const Icon(Icons.restaurant),
-            title: const Text('Batido de Proteínas'),
-            onTap: () {
-              // Acción para ver receta
-            },
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildRecipeSuggestions() {
+  //   return Column(
+  //     children: [
+  //       const Text(
+  //         "Sugerencias de Recetas:",
+  //         style: TextStyle(
+  //           fontSize: 20,
+  //           fontWeight: FontWeight.bold,
+  //           fontFamily: 'Viga',
+  //         ),
+  //       ),
+  //       const SizedBox(height: 10),
+  //       Card(
+  //         elevation: 4,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(10),
+  //         ),
+  //         child: ListTile(
+  //           leading: const Icon(Icons.restaurant),
+  //           title: const Text('Ensalada Mediterránea'),
+  //           onTap: () {
+  //             // Acción para ver receta
+  //           },
+  //         ),
+  //       ),
+  //       const SizedBox(height: 10),
+  //       Card(
+  //         elevation: 4,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(10),
+  //         ),
+  //         child: ListTile(
+  //           leading: const Icon(Icons.restaurant),
+  //           title: const Text('Batido de Proteínas'),
+  //           onTap: () {
+  //             // Acción para ver receta
+  //           },
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }
 
 class MealPlanItem {

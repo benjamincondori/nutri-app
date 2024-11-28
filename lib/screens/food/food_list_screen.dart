@@ -1,21 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:nutrition_ai_app/models/food.dart';
+import 'package:nutrition_ai_app/providers/food_provider.dart';
 import 'package:nutrition_ai_app/screens/screens.dart';
 
 import '../../config/theme/my_colors.dart';
+import '../../controllers/food/food_controller.dart';
 import '../../shared/appbar_with_back.dart';
 
-class FoodListScreen extends StatefulWidget {
+class FoodListScreen extends ConsumerStatefulWidget {
   static const String name = 'food_list_screen';
 
   const FoodListScreen({super.key});
 
   @override
-  State<FoodListScreen> createState() => _FoodListScreenState();
+  FoodListScreenState createState() => FoodListScreenState();
 }
 
-class _FoodListScreenState extends State<FoodListScreen> {
+class FoodListScreenState extends ConsumerState<FoodListScreen> {
+  final FoodController _con = FoodController();
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white;
   Color _textColor = Colors.black;
@@ -27,76 +33,89 @@ class _FoodListScreenState extends State<FoodListScreen> {
   final List<String> _categories = [
     "Todos",
     "Frutas",
-    "Vegetales",
-    "Proteínas",
-    "Granos"
+    "Frutos Secos",
+    "Carnes",
+    "Pescados",
+    'Huevos',
+    "Verduras/Hortalizas",
+    "Legumbres",
+    "Cereales y derivados",
+    "Lacteos",
+    "Grasas",
+    "Quesos",
+    "Otros",
   ];
   String _selectedCategory = "Todos";
-  final List<Map<String, String>> _foodItems = [
-    {
-      "title": "Manzana",
-      "description": "Una fruta fresca y saludable.",
-      "image":
-          "https://i.pinimg.com/736x/66/1b/51/661b51817f56fbbea0ff3e0e05c8011d.jpg",
-      "category": "Frutas",
-    },
-    {
-      "title": "Brócoli",
-      "description": "Una verdura verde rica en vitaminas.",
-      "image":
-          "https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_1280.png",
-      "category": "Vegetales",
-    },
-    {
-      "title": "Pollo",
-      "description": "Rica fuente de proteínas.",
-      "image":
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-evQXcMZYobTq-fRFdkxdg6cgbfiV2ox7Iw&s",
-      "category": "Proteínas",
-    },
-    {
-      "title": "Arroz",
-      "description": "Un grano básico en la alimentación.",
-      "image":
-          "https://i.pinimg.com/736x/66/1b/51/661b51817f56fbbea0ff3e0e05c8011d.jpg",
-      "category": "Granos",
-    },
-    {
-      "title": "Naranja",
-      "description": "Una fruta cítrica rica en vitamina C.",
-      "image":
-          "https://i.pinimg.com/736x/66/1b/51/661b51817f56fbbea0ff3e0e05c8011d.jpg",
-      "category": "Frutas",
-    },
-    {
-      "title": "Zanahoria",
-      "description": "Una verdura rica en betacarotenos.",
-      "image":
-          "https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_1280.png",
-      "category": "Vegetales",
-    },
-    {
-      "title": "Pescado",
-      "description": "Rica fuente de proteínas y omega 3.",
-      "image":
-          "https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_1280.png",
-      "category": "Proteínas",
-    },
-    {
-      "title": "Avena",
-      "description": "Un grano saludable y nutritivo.",
-      "image":
-          "https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_1280.png",
-      "category": "Granos",
-    },
-  ];
+  // final List<Map<String, String>> _foodItems = [
+  //   {
+  //     "title": "Manzana",
+  //     "description": "Una fruta fresca y saludable.",
+  //     "image":
+  //         "https://i.pinimg.com/736x/66/1b/51/661b51817f56fbbea0ff3e0e05c8011d.jpg",
+  //     "category": "Frutas",
+  //   },
+  //   {
+  //     "title": "Brócoli",
+  //     "description": "Una verdura verde rica en vitaminas.",
+  //     "image":
+  //         "https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_1280.png",
+  //     "category": "Vegetales",
+  //   },
+  //   {
+  //     "title": "Pollo",
+  //     "description": "Rica fuente de proteínas.",
+  //     "image":
+  //         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-evQXcMZYobTq-fRFdkxdg6cgbfiV2ox7Iw&s",
+  //     "category": "Proteínas",
+  //   },
+  //   {
+  //     "title": "Arroz",
+  //     "description": "Un grano básico en la alimentación.",
+  //     "image":
+  //         "https://i.pinimg.com/736x/66/1b/51/661b51817f56fbbea0ff3e0e05c8011d.jpg",
+  //     "category": "Granos",
+  //   },
+  //   {
+  //     "title": "Naranja",
+  //     "description": "Una fruta cítrica rica en vitamina C.",
+  //     "image":
+  //         "https://i.pinimg.com/736x/66/1b/51/661b51817f56fbbea0ff3e0e05c8011d.jpg",
+  //     "category": "Frutas",
+  //   },
+  //   {
+  //     "title": "Zanahoria",
+  //     "description": "Una verdura rica en betacarotenos.",
+  //     "image":
+  //         "https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_1280.png",
+  //     "category": "Vegetales",
+  //   },
+  //   {
+  //     "title": "Pescado",
+  //     "description": "Rica fuente de proteínas y omega 3.",
+  //     "image":
+  //         "https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_1280.png",
+  //     "category": "Proteínas",
+  //   },
+  //   {
+  //     "title": "Avena",
+  //     "description": "Un grano saludable y nutritivo.",
+  //     "image":
+  //         "https://cdn.pixabay.com/photo/2016/06/11/15/33/broccoli-1450274_1280.png",
+  //     "category": "Granos",
+  //   },
+  // ];
 
-  List<Map<String, String>> _filteredFoodItems = [];
+  late List<Food> _filteredFoodItems;
 
   @override
   void initState() {
     super.initState();
-    _filteredFoodItems = _foodItems;
+
+    // Se ejecuta despues del metodo build
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _con.init(context, refresh, ref);
+    });
+
     _searchController.addListener(_filterFoodItems);
     _scrollController.addListener(() {
       // Cambiar el color del AppBar cuando se haga scroll
@@ -124,21 +143,32 @@ class _FoodListScreenState extends State<FoodListScreen> {
     super.dispose();
   }
 
-  void _filterFoodItems() {
+  void _filterFoodItems({bool isFiltering = false}) {
     setState(() {
       String searchTerm = _searchController.text.toLowerCase();
-      _filteredFoodItems = _foodItems.where((food) {
+      _filteredFoodItems = ref.watch(foodProvider).where((food) {
         bool matchesCategory = _selectedCategory == "Todos" ||
-            food["category"] == _selectedCategory;
-        bool matchesSearchTerm =
-            food["title"]!.toLowerCase().contains(searchTerm);
+            food.category.toLowerCase() == _selectedCategory.toLowerCase();
+        bool matchesSearchTerm = food.name.toLowerCase().contains(searchTerm);
         return matchesCategory && matchesSearchTerm;
       }).toList();
     });
+
+
+    if (isFiltering) {
+      // Desplazar el scroll al principio de la lista
+      _scrollController.animateTo(
+        0, // Desplazarse a la posición 0 (parte superior)
+        duration: const Duration(milliseconds: 300), // Duración de la animación
+        curve: Curves.easeInOut, // Tipo de curva de animación
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    _filterFoodItems();
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBarWithBack(
@@ -211,7 +241,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
             onTap: () {
               setState(() {
                 _selectedCategory = category;
-                _filterFoodItems();
+                _filterFoodItems(isFiltering: true);
               });
             },
             child: Container(
@@ -250,9 +280,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
         itemBuilder: (context, index) {
           final food = _filteredFoodItems[index];
           return _foodItemCard(
-            title: food["title"]!,
-            description: food["description"]!,
-            imagePath: food["image"]!,
+            food: food
           );
         },
       ),
@@ -261,9 +289,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
 
   // Tarjeta de cada alimento
   Widget _foodItemCard({
-    required String title,
-    required String description,
-    required String imagePath,
+    required Food food,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -288,9 +314,7 @@ class _FoodListScreenState extends State<FoodListScreen> {
           ),
           onTap: () {
             Map<String, dynamic> details = {
-              "title": title,
-              "description": description,
-              "imagePath": imagePath,
+              "food": food,
             };
             context.pushNamed(
               FoodDetailScreen.name,
@@ -298,18 +322,18 @@ class _FoodListScreenState extends State<FoodListScreen> {
             );
           },
           leading: Image.network(
-            imagePath,
+            food.imageUrl,
             width: 50,
             height: 50,
             fit: BoxFit.cover,
           ),
           title: Text(
-            title,
+            food.name,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
-          subtitle: Text(description),
+          subtitle: Text(food.description),
           trailing: const Icon(
             Iconsax.arrow_circle_right,
             color: Colors.grey,
@@ -317,5 +341,9 @@ class _FoodListScreenState extends State<FoodListScreen> {
         ),
       ),
     );
+  }
+
+  void refresh() {
+    setState(() {});
   }
 }

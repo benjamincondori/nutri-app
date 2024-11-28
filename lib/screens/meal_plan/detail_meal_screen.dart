@@ -184,73 +184,73 @@ class _MealDetailScreenState extends State<MealDetailScreen> {
   }
 
   // Widget para mostrar la información nutricional
-  Widget _buildNutritionInfo(String label, String value) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 5),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.grey,
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildNutritionInfo(String label, String value) {
+  //   return Column(
+  //     children: [
+  //       Text(
+  //         value,
+  //         style: const TextStyle(
+  //           fontSize: 18,
+  //           fontWeight: FontWeight.bold,
+  //         ),
+  //       ),
+  //       const SizedBox(height: 5),
+  //       Text(
+  //         label,
+  //         style: const TextStyle(
+  //           fontSize: 14,
+  //           color: Colors.grey,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
-  Widget _nutrientCard(String title, String value, String imagePath) {
-    return Container(
-      margin: const EdgeInsets.only(right: 10),
-      decoration: BoxDecoration(
-        color: Colors.grey[200], // Color de fondo
-        borderRadius: BorderRadius.circular(10), // Bordes redondeados
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Image.network(
-              imagePath,
-              height: 40,
-              width: 40,
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  value,
-                  style: const TextStyle(color: Colors.black54),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _nutrientCard(String title, String value, String imagePath) {
+  //   return Container(
+  //     margin: const EdgeInsets.only(right: 10),
+  //     decoration: BoxDecoration(
+  //       color: Colors.grey[200], // Color de fondo
+  //       borderRadius: BorderRadius.circular(10), // Bordes redondeados
+  //       boxShadow: const [
+  //         BoxShadow(
+  //           color: Colors.black12,
+  //           blurRadius: 5,
+  //           offset: Offset(0, 2),
+  //         ),
+  //       ],
+  //     ),
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(15.0),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         crossAxisAlignment: CrossAxisAlignment.center,
+  //         children: [
+  //           Image.network(
+  //             imagePath,
+  //             height: 40,
+  //             width: 40,
+  //           ),
+  //           const SizedBox(width: 10),
+  //           Column(
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: [
+  //               Text(
+  //                 title,
+  //                 style: const TextStyle(fontWeight: FontWeight.bold),
+  //               ),
+  //               Text(
+  //                 value,
+  //                 style: const TextStyle(color: Colors.black54),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // Widget para construir cada ítem de alimento
   Widget _buildFoodItem(String imageUrl, String title, String description) {

@@ -118,7 +118,7 @@ class RegisterController {
         age: DateTime.now().year - selectedDate!.year,
         healthRestrictions: restriction,
         height: double.parse(height),
-        physicalActivity: activity,
+        physicalActivityId: int.parse(activity),
         weight: double.parse(weight),
         userId: userId,
         birthday: DateTime.parse(birthday),

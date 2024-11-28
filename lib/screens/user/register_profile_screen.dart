@@ -1,14 +1,16 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:nutrition_ai_app/controllers/auth/register_controller.dart';
+import 'package:nutrition_ai_app/providers/physical_activity_provider.dart';
 
 import '../../config/theme/my_colors.dart';
+import '../../controllers/physical_activity/physical_activity_controller.dart';
+import '../../models/physical_activity.dart';
 
-class RegisterProfileScreen extends StatefulWidget {
+class RegisterProfileScreen extends ConsumerStatefulWidget {
   static const String name = 'register_profile_screen';
 
   final int userId;
@@ -16,23 +18,24 @@ class RegisterProfileScreen extends StatefulWidget {
   const RegisterProfileScreen({super.key, required this.userId});
 
   @override
-  State<RegisterProfileScreen> createState() => _RegisterProfileScreenState();
+  RegisterProfileScreenState createState() => RegisterProfileScreenState();
 }
 
-class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
+class RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
   final RegisterController _con = RegisterController();
+  final PhysicalActivityController _physicalActivityController = PhysicalActivityController();
 
   // Lista de opciones de género
   final List<String> _genderOptions = ['Masculino', 'Femenino', 'Otro'];
 
   // Lista de opciones de actividad física
-  final List<String> _physicalActivities = [
-    'Sedentario',
-    'Ligero',
-    'Moderado',
-    'Activo',
-    'Muy activo',
-  ];
+  // final List<String> _physicalActivities = [
+  //   'Sedentario',
+  //   'Ligero',
+  //   'Moderado',
+  //   'Activo',
+  //   'Muy activo',
+  // ];
 
   // Lista de restricciones
   final List<String> _restrictions = [
@@ -52,11 +55,14 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
     // Se ejecuta despues del metodo build
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       _con.init(context, refresh);
+      _physicalActivityController.init(context, refresh, ref);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final physicalActivities = ref.watch(physicalActivityProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SizedBox(
@@ -67,7 +73,7 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
               _imageBanner(),
               _textRegister(),
               _textFieldGender(),
-              _textFieldPhysicalActivity(),
+              _textFieldPhysicalActivity(physicalActivities),
               _textFieldBirthday(),
               _textFieldWeight(),
               _textFieldHeight(),
@@ -151,41 +157,41 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
             ],
           ),
         ),
-        Positioned(
-          top: 50, // Ajusta la posición vertical
-          left: 25, // Ajusta la posición horizontal
-          child: GestureDetector(
-            onTap: () {
-              context.pop();
-            },
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    MyColors.primaryColor, // Color inicial del gradiente
-                    MyColors.secondaryColor, // Color final del gradiente
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: MyColors.primaryColor.withOpacity(0.5),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: const Icon(
-                CupertinoIcons.back,
-                color: Colors.white,
-                size: 30,
-              ),
-            ),
-          ),
-        ),
+        // Positioned(
+        //   top: 50, // Ajusta la posición vertical
+        //   left: 25, // Ajusta la posición horizontal
+        //   child: GestureDetector(
+        //     onTap: () {
+        //       context.pop();
+        //     },
+        //     child: Container(
+        //       padding: const EdgeInsets.all(10),
+        //       decoration: BoxDecoration(
+        //         gradient: LinearGradient(
+        //           colors: [
+        //             MyColors.primaryColor, // Color inicial del gradiente
+        //             MyColors.secondaryColor, // Color final del gradiente
+        //           ],
+        //           begin: Alignment.topLeft,
+        //           end: Alignment.bottomRight,
+        //         ),
+        //         boxShadow: [
+        //           BoxShadow(
+        //             color: MyColors.primaryColor.withOpacity(0.5),
+        //             blurRadius: 10,
+        //             offset: const Offset(0, 5),
+        //           ),
+        //         ],
+        //         borderRadius: BorderRadius.circular(15),
+        //       ),
+        //       child: const Icon(
+        //         CupertinoIcons.back,
+        //         color: Colors.white,
+        //         size: 30,
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
@@ -275,7 +281,7 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
     );
   }
   
-  Widget _textFieldPhysicalActivity() {
+  Widget _textFieldPhysicalActivity(List<PhysicalActivity> physicalActivities) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 35, vertical: 5),
       decoration: BoxDecoration(
@@ -300,16 +306,16 @@ class _RegisterProfileScreenState extends State<RegisterProfileScreen> {
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(15),
         ),
-        items: _physicalActivities.map((String value) {
+        items: physicalActivities.map((PhysicalActivity activity) {
           return DropdownMenuItem<String>(
-            value: value,
+            value: activity.id.toString(),
             child: Container(
               margin: const EdgeInsets.only(left: 10, right: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Text(
-                value,
+                activity.name,
                 style: TextStyle(
                   color: MyColors.primaryColorDark,
                 ),

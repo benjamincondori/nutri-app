@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
 import 'package:nutrition_ai_app/screens/screens.dart';
 
+import '../../models/food.dart';
+
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
   routes: [
@@ -70,16 +72,14 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
         return FoodDetailScreen(
-          title: extra['title'] as String,
-          description: extra['description'] as String,
-          imagePath: extra['imagePath'] as String,
+          food: extra['food'] as Food,
         );
       },
     ),
     GoRoute(
       path: '/notifications',
       name: NotificationsScreen.name,
-      builder: (context, state) => NotificationsScreen(),
+      builder: (context, state) => const NotificationsScreen(),
     ),
   ],
 );

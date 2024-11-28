@@ -3,20 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../config/theme/my_colors.dart';
+import '../../models/food.dart';
 
 class FoodDetailScreen extends StatelessWidget {
   static const String name = 'food_detail_screen';
 
-  final String title;
-  final String description;
-  final String imagePath;
+  final Food food;
 
-  const FoodDetailScreen({
-    super.key,
-    required this.title,
-    required this.description,
-    required this.imagePath,
-  });
+  const FoodDetailScreen({super.key, required this.food});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +31,7 @@ class FoodDetailScreen extends StatelessWidget {
       top: 0,
       bottom: MediaQuery.of(context).size.height * 0.4,
       child: Image.network(
-        imagePath,
+        food.imageUrl,
         fit: BoxFit.cover,
       ),
     );
@@ -78,47 +72,73 @@ class FoodDetailScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Viga',
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        food.name,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Viga',
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      description,
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      height: 100,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          _nutrientInfoCard("Calorías", "150 kcal",
-                              Icons.local_fire_department),
-                          _nutrientInfoCard(
-                              "Proteínas", "10 g", Icons.fitness_center),
-                          _nutrientInfoCard("Grasas", "5 g", Icons.opacity),
-                          _nutrientInfoCard(
-                              "Carbohidratos", "20 g", Icons.grain),
-                        ],
+                      const SizedBox(height: 10),
+                      Text(
+                        food.description,
+                        style: const TextStyle(fontSize: 16),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    // Añadir más información o elementos según sea necesario
-                    const Text(
-                      "Otros detalles...",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        height: 100,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            _nutrientInfoCard("Calorías", "${food.calories} kcal",
+                                Icons.local_fire_department),
+                            _nutrientInfoCard("Proteínas", "${food.proteins} g",
+                                Icons.fitness_center),
+                            _nutrientInfoCard(
+                                "Grasas", "${food.fats} g", Icons.opacity),
+                            _nutrientInfoCard("Carbohidratos",
+                                "${food.carbohydrates} g", Icons.grain),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // Añadir más información o elementos según sea necesario
+                      const Text(
+                        "Beneficios:",
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Viga',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        food.benefits,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Categoria:",
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Viga',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        food.category,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

@@ -2,7 +2,7 @@ class HealthProfile {
   final int age;
   final String healthRestrictions;
   final double height;
-  final String physicalActivity;
+  final int physicalActivityId;
   final double weight;
   final int userId;
   final DateTime birthday;
@@ -12,7 +12,7 @@ class HealthProfile {
     required this.age,
     required this.healthRestrictions,
     required this.height,
-    required this.physicalActivity,
+    required this.physicalActivityId,
     required this.weight,
     required this.userId,
     required this.birthday,
@@ -23,7 +23,7 @@ class HealthProfile {
     int? age,
     String? healthRestrictions,
     double? height,
-    String? physicalActivity,
+    int? physicalActivityId,
     double? weight,
     int? userId,
     DateTime? birthday,
@@ -33,7 +33,7 @@ class HealthProfile {
         age: age ?? this.age,
         healthRestrictions: healthRestrictions ?? this.healthRestrictions,
         height: height ?? this.height,
-        physicalActivity: physicalActivity ?? this.physicalActivity,
+        physicalActivityId: physicalActivityId ?? this.physicalActivityId,
         weight: weight ?? this.weight,
         userId: userId ?? this.userId,
         birthday: birthday ?? this.birthday,
@@ -44,7 +44,7 @@ class HealthProfile {
         age: json["age"],
         healthRestrictions: json["health_restrictions"],
         height: json["height"],
-        physicalActivity: json["physical_activity"],
+        physicalActivityId: json["physical_activity_id"],
         weight: json["weight"]?.toDouble(),
         userId: json["user_id"],
         birthday: DateTime.parse(json["birthday"]),
@@ -55,7 +55,7 @@ class HealthProfile {
         "age": age,
         "health_restrictions": healthRestrictions,
         "height": height,
-        "physical_activity": physicalActivity,
+        "physical_activity_id": physicalActivityId,
         "weight": weight,
         "user_id": userId,
         "birthday":

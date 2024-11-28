@@ -72,23 +72,23 @@ class _CustomNavbarState extends State<CustomNavbar> {
   }
 
   // Método para crear el ícono con gradiente usando ShaderMask
-  Widget _gradientIcon(IconData icon, {double size = 24}) {
-    return ShaderMask(
-      shaderCallback: (Rect bounds) {
-        return LinearGradient(
-          colors: [
-            MyColors.secondaryColor, // Color de inicio del gradiente
-            MyColors.primaryColor, // Color final del gradiente
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ).createShader(bounds);
-      },
-      child: Icon(
-        icon,
-        size: size,
-        color: Colors.white, // Este color se reemplaza por el gradiente
-      ),
-    );
-  }
+  // Widget _gradientIcon(IconData icon, {double size = 24}) {
+  //   return ShaderMask(
+  //     shaderCallback: (Rect bounds) {
+  //       return LinearGradient(
+  //         colors: [
+  //           MyColors.secondaryColor, // Color de inicio del gradiente
+  //           MyColors.primaryColor, // Color final del gradiente
+  //         ],
+  //         begin: Alignment.topLeft,
+  //         end: Alignment.bottomRight,
+  //       ).createShader(bounds);
+  //     },
+  //     child: Icon(
+  //       icon,
+  //       size: size,
+  //       color: Colors.white, // Este color se reemplaza por el gradiente
+  //     ),
+  //   );
+  // }
 }
