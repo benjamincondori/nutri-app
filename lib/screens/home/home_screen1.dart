@@ -3,23 +3,22 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:iconsax/iconsax.dart';
 
 import '../../config/theme/my_colors.dart';
 import '../../providers/user_provider.dart';
 import '../../shared/appbar.dart';
 import '../screens.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
-  static const String name = 'home_screen';
+class HomeScreen1 extends ConsumerStatefulWidget {
+  static const String name = 'home_screen_1';
 
-  const HomeScreen({super.key});
+  const HomeScreen1({super.key});
 
   @override
-  HomeScreenState createState() => HomeScreenState();
+  HomeScreen1State createState() => HomeScreen1State();
 }
 
-class HomeScreenState extends ConsumerState<HomeScreen> {
+class HomeScreen1State extends ConsumerState<HomeScreen1> {
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white; // Color inicial del AppBar
   Color _textColor = Colors.black;
@@ -76,7 +75,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
+    final user = ref.watch(userNutritionistProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -124,28 +123,28 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          context.pushNamed(CreateMealPlanScreen.name);
-        },
-        label: const Row(
-          children: [
-            Icon(Iconsax.box_add, color: Colors.white),
-            SizedBox(width: 8),
-            Text(
-              'Crear Plan',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Viga',
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: MyColors.primaryColor,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {
+      //     context.pushNamed(CreateMealPlanScreen.name);
+      //   },
+      //   label: const Row(
+      //     children: [
+      //       Icon(Iconsax.box_add, color: Colors.white),
+      //       SizedBox(width: 8),
+      //       Text(
+      //         'Crear Plan',
+      //         style: TextStyle(
+      //           fontWeight: FontWeight.bold,
+      //           fontFamily: 'Viga',
+      //           fontSize: 16,
+      //           color: Colors.white,
+      //         ),
+      //       ),
+      //     ],
+      //   ),
+      //   backgroundColor: MyColors.primaryColor,
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
@@ -442,18 +441,4 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
   //     ],
   //   );
   // }
-}
-
-class MealPlanItem {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
-
-  const MealPlanItem({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.color,
-  });
 }

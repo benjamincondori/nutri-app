@@ -1,23 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nutrition_ai_app/controllers/plan/plan_controller.dart';
 
 import '../../config/theme/my_colors.dart';
 import '../../shared/appbar_with_back.dart';
 
-class CreateMealPlanScreen extends StatefulWidget {
+class CreateMealPlanScreen extends ConsumerStatefulWidget {
   static const String name = 'create_meal_plan_screen';
 
   const CreateMealPlanScreen({super.key});
 
   @override
-  State<CreateMealPlanScreen> createState() => _CreateMealPlanScreenState();
+  CreateMealPlanScreenState createState() => CreateMealPlanScreenState();
 }
 
-class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
-  String _selectedGoal = '';
+class CreateMealPlanScreenState extends ConsumerState<CreateMealPlanScreen> {
+  final PlanController _con = PlanController();
+  
   bool _showCustomGoalField = false;
-  final TextEditingController _customGoalController = TextEditingController();
-  int _selectedDays = 3; // Inicialmente seleccionamos 3 días
 
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white;
@@ -28,6 +29,11 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
   @override
   void initState() {
     super.initState();
+    
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _con.init(context, refresh, ref);
+    });
+    
     _scrollController.addListener(() {
       // Cambiar el color del AppBar cuando se haga scroll
       setState(() {
@@ -54,8 +60,8 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
 
   void _onGoalChanged(String? value) {
     setState(() {
-      _selectedGoal = value ?? '';
-      _showCustomGoalField = _selectedGoal == 'Otro';
+      _con.selectedGoal = value ?? '';
+      _showCustomGoalField = _con.selectedGoal == 'Otro';
     });
   }
 
@@ -124,14 +130,14 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
               ),
             ),
             value: value,
-            groupValue: _selectedGoal,
+            groupValue: _con.selectedGoal,
             onChanged: _onGoalChanged,
           );
         }),
         if (_showCustomGoalField) ...[
           const SizedBox(height: 10),
           TextField(
-            controller: _customGoalController,
+            controller: _con.customGoalController,
             minLines: 2,
             maxLines: 5,
             style: TextStyle(
@@ -201,7 +207,7 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
             ),
             borderRadius: BorderRadius.circular(10),
             dropdownColor: MyColors.primarySwatch[10],
-            value: _selectedDays,
+            value: _con.selectedDays,
             items: List.generate(7, (index) {
               return DropdownMenuItem<int>(
                 value: index + 1,
@@ -216,7 +222,7 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
             }).toList(),
             onChanged: (int? newValue) {
               setState(() {
-                _selectedDays = newValue!;
+                _con.selectedDays = newValue!;
               });
             },
             icon: Icon(
@@ -254,8 +260,7 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
       ),
       child: ElevatedButton(
         onPressed: () {
-          // context.goNamed(HomeScreen.name);
-          context.pop();
+          _con.generatePlan();
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
@@ -274,5 +279,9 @@ class _CreateMealPlanScreenState extends State<CreateMealPlanScreen> {
         ),
       ),
     );
+  }
+  
+  void refresh() {
+    setState(() {});
   }
 }

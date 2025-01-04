@@ -4,26 +4,26 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:nutrition_ai_app/models/food.dart';
-import 'package:nutrition_ai_app/providers/food_provider.dart';
+import 'package:nutrition_ai_app/screens/meal/meal_create_screen.dart';
 import 'package:nutrition_ai_app/screens/screens.dart';
 
 import '../../config/theme/my_colors.dart';
-import '../../controllers/food/food_controller.dart';
-import '../../providers/user_provider.dart';
+import '../../controllers/meal/meal_controller.dart';
+import '../../models/meal.dart';
+import '../../providers/meal_provider.dart';
 import '../../shared/appbar_with_back.dart';
 
-class FoodListScreen extends ConsumerStatefulWidget {
-  static const String name = 'food_list_screen';
+class MealListScreen extends ConsumerStatefulWidget {
+  static const String name = 'meal_list_screen';
 
-  const FoodListScreen({super.key});
+  const MealListScreen({super.key});
 
   @override
-  FoodListScreenState createState() => FoodListScreenState();
+  MealListScreenState createState() => MealListScreenState();
 }
 
-class FoodListScreenState extends ConsumerState<FoodListScreen> {
-  final FoodController _con = FoodController();
+class MealListScreenState extends ConsumerState<MealListScreen> {
+  final MealController _con = MealController();
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white;
   Color _textColor = Colors.black;
@@ -34,22 +34,13 @@ class FoodListScreenState extends ConsumerState<FoodListScreen> {
   final FocusNode _searchFocus = FocusNode();
   final List<String> _categories = [
     "Todos",
-    "Frutas",
-    "Frutos Secos",
-    "Carnes",
-    "Pescados",
-    'Huevos',
-    "Verduras/Hortalizas",
-    "Legumbres",
-    "Cereales y derivados",
-    "Lacteos",
-    "Grasas",
-    "Quesos",
-    "Otros",
+    "Desayuno",
+    "Almuerzo",
+    "Cena",
   ];
   String _selectedCategory = "Todos";
 
-  late List<Food> _filteredFoodItems;
+  late List<Meal> _filteredMealItems;
 
   @override
   void initState() {
@@ -90,10 +81,10 @@ class FoodListScreenState extends ConsumerState<FoodListScreen> {
   void _filterFoodItems({bool isFiltering = false}) {
     setState(() {
       String searchTerm = _searchController.text.toLowerCase();
-      _filteredFoodItems = ref.watch(foodProvider).where((food) {
+      _filteredMealItems = ref.watch(mealProvider).where((meal) {
         bool matchesCategory = _selectedCategory == "Todos" ||
-            food.category.toLowerCase() == _selectedCategory.toLowerCase();
-        bool matchesSearchTerm = food.name.toLowerCase().contains(searchTerm);
+            meal.mealType.toLowerCase() == _selectedCategory.toLowerCase();
+        bool matchesSearchTerm = meal.name.toLowerCase().contains(searchTerm);
         return matchesCategory && matchesSearchTerm;
       }).toList();
     });
@@ -115,7 +106,7 @@ class FoodListScreenState extends ConsumerState<FoodListScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBarWithBack(
-        title: 'Alimentos',
+        title: 'Comidas',
         backgroundColor: _appBarColor,
         textColor: _textColor,
         iconColor: _iconColor,
@@ -129,56 +120,19 @@ class FoodListScreenState extends ConsumerState<FoodListScreen> {
           const SizedBox(height: 25),
           _filterCategory(),
           const SizedBox(height: 15),
-          _foodList(),
+          _mealList(),
         ],
       ),
     );
   }
 
   // Campo de Búsqueda
-  // Widget _searchBar() {
-  //   return Container(
-  //     margin: const EdgeInsets.only(left: 25, right: 25, top: 25),
-  //     decoration: BoxDecoration(
-  //       // color: MyColors.primarySwatch[50],
-  //       color: Colors.white,
-  //       borderRadius: BorderRadius.circular(15),
-  //       boxShadow: [
-  //         BoxShadow(
-  //           color: Colors.grey.withOpacity(0.5),
-  //           spreadRadius: 1,
-  //           blurRadius: 10,
-  //           offset: const Offset(0, 1),
-  //         ),
-  //       ],
-  //     ),
-  //     child: TextField(
-  //       controller: _searchController,
-  //       focusNode: _searchFocus,
-  //       decoration: const InputDecoration(
-  //         hintText: 'Buscar alimentos...',
-  //         prefixIcon: Icon(Icons.search),
-  //         border: InputBorder.none,
-  //         // focusedBorder: OutlineInputBorder(
-  //         //   borderRadius: BorderRadius.circular(15),
-  //         //   borderSide: BorderSide(color: MyColors.primarySwatch[200]!),
-  //         // ),
-  //         contentPadding: EdgeInsets.all(15),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _searchBar(BuildContext context, WidgetRef ref) {
-    final userNutritionist = ref.watch(userNutritionistProvider);
-
     return Row(
       children: [
         Expanded(
           child: Container(
-            margin: userNutritionist != null
-                ? const EdgeInsets.only(left: 25, top: 25)
-                : const EdgeInsets.only(left: 25, right: 25, top: 25),
+            margin: const EdgeInsets.only(left: 25, top: 25),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
@@ -195,7 +149,7 @@ class FoodListScreenState extends ConsumerState<FoodListScreen> {
               controller: _searchController,
               focusNode: _searchFocus,
               decoration: const InputDecoration(
-                hintText: 'Buscar alimentos...',
+                hintText: 'Buscar comidas...',
                 prefixIcon: Icon(Icons.search),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.all(15),
@@ -203,26 +157,24 @@ class FoodListScreenState extends ConsumerState<FoodListScreen> {
             ),
           ),
         ),
-        if (userNutritionist != null) ...[
-          const SizedBox(width: 12),
-          Container(
-            margin: const EdgeInsets.only(right: 25, top: 25),
-            child: ElevatedButton(
-              onPressed: () {
-                context.pushNamed(FoodCreateScreen.name);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: MyColors.primaryColor,
-                iconColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                padding: const EdgeInsets.all(10), // Espaciado interno
+        const SizedBox(width: 12),
+        Container(
+          margin: const EdgeInsets.only(right: 25, top: 25),
+          child: ElevatedButton(
+            onPressed: () {
+              context.pushNamed(MealCreateScreen.name);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: MyColors.primaryColor,
+              iconColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
               ),
-              child: const Icon(Icons.add, size: 32),
+              padding: const EdgeInsets.all(10), // Espaciado interno
             ),
+            child: const Icon(Icons.add, size: 32),
           ),
-        ]
+        ),
       ],
     );
   }
@@ -268,10 +220,10 @@ class FoodListScreenState extends ConsumerState<FoodListScreen> {
     );
   }
 
-  // Lista de Alimentos Filtrados
-  Widget _foodList() {
-    // Mostrar un texto cuando no haya alimentos con bordes punteados
-    if (_filteredFoodItems.isEmpty) {
+  // Lista de Comidas Filtradas
+  Widget _mealList() {
+    if (_filteredMealItems.isEmpty) {
+      // Mostrar un texto cuando no haya comidas con bordes punteados
       return Expanded(
         child: Container(
           margin: const EdgeInsets.only(
@@ -288,7 +240,7 @@ class FoodListScreenState extends ConsumerState<FoodListScreen> {
             dashPattern: const [7, 5],
             child: const Center(
               child: Text(
-                'No se encontraron alimentos',
+                'No se encontraron comidas',
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.grey,
@@ -305,23 +257,27 @@ class FoodListScreenState extends ConsumerState<FoodListScreen> {
     // Mostrar la lista de comidas cuando haya elementos
     return Expanded(
       child: ListView.separated(
-        padding:
-            const EdgeInsets.only(left: 25, right: 25, top: 15, bottom: 30),
+        padding: const EdgeInsets.only(
+          left: 25,
+          right: 25,
+          top: 15,
+          bottom: 30,
+        ),
         shrinkWrap: true,
         controller: _scrollController,
-        itemCount: _filteredFoodItems.length,
+        itemCount: _filteredMealItems.length,
         separatorBuilder: (context, index) => const SizedBox(height: 15),
         itemBuilder: (context, index) {
-          final food = _filteredFoodItems[index];
-          return _foodItemCard(food: food);
+          final meal = _filteredMealItems[index];
+          return _mealItemCard(meal: meal);
         },
       ),
     );
   }
 
   // Tarjeta de cada alimento
-  Widget _foodItemCard({
-    required Food food,
+  Widget _mealItemCard({
+    required Meal meal,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -344,26 +300,21 @@ class FoodListScreenState extends ConsumerState<FoodListScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          onTap: () {
+          onTap: () async {
             // Seleccionar el alimento y navegar a la pantalla de detalle
-            ref.read(selectedFoodProvider.notifier).state = food;
-            context.pushNamed(
-              FoodDetailScreen.name,
-            );
+            await _con.getFoodsByMeal(meal.id!);
+            
+            if (mounted) {
+              context.pushNamed(MealDetailScreen.name);
+            }
           },
-          leading: Image.network(
-            food.imageUrl!,
-            width: 50,
-            height: 50,
-            fit: BoxFit.cover,
-          ),
           title: Text(
-            food.name,
+            meal.name,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
             ),
           ),
-          subtitle: Text(food.description),
+          subtitle: Text("Tipo: ${meal.mealType}"),
           trailing: const Icon(
             Iconsax.arrow_circle_right,
             color: Colors.grey,

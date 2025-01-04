@@ -39,4 +39,30 @@ class UserService {
       throw Exception('Ocurrió un error al obtener el perfil');
     }
   }
+  
+  Future<UserNutritionist> getProfileNutritionist(String token) async {
+    Uri url = Uri.http(_url, '$_api/profile/nutritionist');
+
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      // Si la respuesta es exitosa, retornamos los datos
+      final data = json.decode(response.body);
+      print("UserService::getProfileNutritionist::data: $data");
+      return UserNutritionist.fromJson(data);
+    } else if (response.statusCode == 401) {
+      // Si el token es inválido, redirigimos al login
+      throw 'Token inválido';
+    } else {
+      // Si ocurre un error, devolvemos el mensaje original
+      throw Exception('Ocurrió un error al obtener el perfil');
+    }
+  }
+  
 }

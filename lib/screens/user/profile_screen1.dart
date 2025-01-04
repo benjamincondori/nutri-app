@@ -8,16 +8,16 @@ import '../../shared/appbar_with_back.dart';
 import '../../shared/card_with_links.dart';
 import '../../shared/utils/shared_pref.dart';
 
-class ProfileScreen extends ConsumerStatefulWidget {
-  static const String name = 'profile_screen';
-  
-  const ProfileScreen({super.key});
+class ProfileScreen1 extends ConsumerStatefulWidget {
+  static const String name = 'profile_screen_1';
+
+  const ProfileScreen1({super.key});
 
   @override
-  ProfileScreenState createState() => ProfileScreenState();
+  ProfileScreen1State createState() => ProfileScreen1State();
 }
 
-class ProfileScreenState extends ConsumerState<ProfileScreen> {
+class ProfileScreen1State extends ConsumerState<ProfileScreen1> {
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white; // Color inicial del AppBar
   Color _textColor = Colors.black;
@@ -55,16 +55,13 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(userProvider);
+    final user = ref.watch(userNutritionistProvider);
 
     String userName =
         user != null ? '${user.name} ${user.lastname}' : 'Usuario';
     String profileImageUrl = user != null
         ? user.urlImage
         : "https://img.lovepik.com/png/20231128/3d-illustration-avatar-profile-man-collection-guy-cheerful_716220_wh860.png";
-    double height = user != null ? user.healthProfile.height : 170.0;
-    double weight = user != null ? user.healthProfile.weight : 65.0;
-    int age = user != null ? user.healthProfile.age : 25;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -74,7 +71,6 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
         textColor: _textColor,
         iconColor: _iconColor,
         iconBackgroundColor: _iconBackgroundColor,
-        showBackButton: false,
       ),
       body: SingleChildScrollView(
         controller: _scrollController,
@@ -85,7 +81,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
             _profileImage(profileImageUrl),
             const SizedBox(height: 8),
             _profileName(userName),
-            _profileInfoHealth(height, weight, age),
+            // _profileInfoHealth(height, weight, age),
             const SizedBox(height: 15),
             _profileAccount(),
             const SizedBox(height: 30),

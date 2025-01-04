@@ -6,16 +6,16 @@ import 'package:nutrition_ai_app/controllers/user/user_controller.dart';
 import 'package:nutrition_ai_app/screens/screens.dart';
 import 'package:nutrition_ai_app/shared/navbar2.dart';
 
-class MainScreen extends ConsumerStatefulWidget {
-  static const String name = 'main_screen';
+class MainScreen1 extends ConsumerStatefulWidget {
+  static const String name = 'main_screen_1';
 
-  const MainScreen({super.key});
+  const MainScreen1({super.key});
 
   @override
-  MainScreenState createState() => MainScreenState();
+  MainScreen1State createState() => MainScreen1State();
 }
 
-class MainScreenState extends ConsumerState<MainScreen> {
+class MainScreen1State extends ConsumerState<MainScreen1> {
   final UserController _con = UserController();
   int _selectedIndex = 0; // Mantiene el índice del tab seleccionado
 
@@ -28,10 +28,10 @@ class MainScreenState extends ConsumerState<MainScreen> {
 
   // Lista de las vistas correspondientes a cada tab
   final List<Widget> _screens = [
-    const HomeScreen(),
+    const HomeScreen1(),
     const LoginScreen(),
+    const MealListScreen(),
     const FoodListScreen(),
-    const ProfileScreen(),
   ];
 
   @override
@@ -44,7 +44,7 @@ class MainScreenState extends ConsumerState<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _con.getUserProfile(ref);
+    _con.getUserProfileNutritionist(ref);
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
@@ -62,7 +62,7 @@ class MainScreenState extends ConsumerState<MainScreen> {
         bottomNavigationBar: CustomNavbar2(
           onTabChange: _onTabChange, // Pasar la función de cambio de tab
           selectedIndex: _selectedIndex, // El índice de la pestaña seleccionada
-          menuItems: appMenuItems,
+          menuItems: appMenuItems1,
         ),
       ),
     );

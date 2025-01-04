@@ -11,6 +11,8 @@ dependencies:
   card_swiper: ^3.0.1
   cupertino_icons: ^1.0.8
   delightful_toast: ^1.1.0
+  dotted_border: ^2.1.0
+  easy_date_timeline: ^2.0.6
   fl_chart: ^0.69.0
   flutter:
     sdk: flutter

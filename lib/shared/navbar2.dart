@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:nutrition_ai_app/config/menu/menu_items.dart';
 import 'package:nutrition_ai_app/config/theme/my_colors.dart';
+
+import '../config/menu/menu_items.dart';
 
 class CustomNavbar2 extends StatefulWidget {
   final Function(int) onTabChange; // Callback para manejar el cambio de pestaña
   final int selectedIndex; // El índice de la pestaña seleccionada
+  final List<MenuItem> menuItems;
 
   const CustomNavbar2({
     super.key,
     required this.onTabChange,
     required this.selectedIndex,
+    required this.menuItems,
   });
 
   @override
@@ -57,9 +60,9 @@ class _CustomNavbar2State extends State<CustomNavbar2> {
         onTabChange:
             widget.onTabChange, // Llama a la función pasada al componente
         tabs: [
-          ...appMenuItems.map(
+          ...widget.menuItems.map(
             (item) {
-              IconData icon = widget.selectedIndex == appMenuItems.indexOf(item)
+              IconData icon = widget.selectedIndex == widget.menuItems.indexOf(item)
                   ? item.iconSelected
                   : item.icon;
               return GButton(

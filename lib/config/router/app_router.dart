@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:nutrition_ai_app/screens/screens.dart';
 
 import '../../models/food.dart';
+import '../../models/meal.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/splash',
@@ -22,9 +23,24 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const MainScreen(),
     ),
     GoRoute(
+      path: '/main-screen-1',
+      name: MainScreen1.name,
+      builder: (context, state) => const MainScreen1(),
+    ),
+    GoRoute(
       path: '/home',
       name: HomeScreen.name,
       builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: '/home1',
+      name: HomeScreen1.name,
+      builder: (context, state) => const HomeScreen1(),
+    ),
+    GoRoute(
+      path: '/profile-nutritionist',
+      name: ProfileScreen1.name,
+      builder: (context, state) => const ProfileScreen1(),
     ),
     GoRoute(
       path: '/user-register',
@@ -42,16 +58,36 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: '/meal/list',
+      name: MealListScreen.name,
+      builder: (context, state) => const MealListScreen(),
+    ),
+    GoRoute(
+      path: '/meal/create',
+      name: MealCreateScreen.name,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return MealCreateScreen(
+          mealToEdit: extra?['meal'] as Meal?,
+        ); // Pasa el parámetro opcional
+      },
+    ),
+    GoRoute(
+      path: '/meal/detail',
+      name: MealDetailScreen.name,
+      builder: (context, state) => const MealDetailScreen(),
+    ),
+    GoRoute(
       path: '/meal-plan/create',
       name: CreateMealPlanScreen.name,
       builder: (context, state) => const CreateMealPlanScreen(),
     ),
     GoRoute(
       path: '/meal-plan/detail',
-      name: MealDetailScreen.name,
+      name: MealPlanDetailScreen.name,
       builder: (context, state) {
         final extra = state.extra as Map<String, dynamic>;
-        return MealDetailScreen(
+        return MealPlanDetailScreen(
           mealType: extra['mealType'] as String,
           mealName: extra['mealName'] as String,
           calories: extra['calories'] as int,
@@ -62,18 +98,25 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
-      path: '/food-list',
+      path: '/food/create',
+      name: FoodCreateScreen.name,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return FoodCreateScreen(
+          foodToEdit: extra?['food'] as Food?,
+        ); // Pasa el parámetro opcional
+      },
+    ),
+    GoRoute(
+      path: '/food/list',
       name: FoodListScreen.name,
       builder: (context, state) => const FoodListScreen(),
     ),
     GoRoute(
-      path: '/food-detail',
+      path: '/food/detail',
       name: FoodDetailScreen.name,
       builder: (context, state) {
-        final extra = state.extra as Map<String, dynamic>;
-        return FoodDetailScreen(
-          food: extra['food'] as Food,
-        );
+        return const FoodDetailScreen();
       },
     ),
     GoRoute(

@@ -17,3 +17,19 @@ class UserProvider extends StateNotifier<User?> {
   }
 }
 
+final userNutritionistProvider =
+    StateNotifierProvider<UserNutritionistProvider, UserNutritionist?>((ref) {
+  return UserNutritionistProvider();
+});
+
+class UserNutritionistProvider extends StateNotifier<UserNutritionist?> {
+  UserNutritionistProvider() : super(null);
+
+  void setUser(UserNutritionist user) {
+    state = user;
+  }
+
+  void removeUser() {
+    state = null;
+  }
+}

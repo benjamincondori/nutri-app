@@ -5,6 +5,7 @@ import 'package:nutrition_ai_app/services/auth/login_service.dart';
 import 'package:nutrition_ai_app/shared/utils/my_toastbar.dart';
 
 import '../../screens/main_screen.dart';
+import '../../screens/main_screen1.dart';
 import '../../shared/utils/shared_pref.dart';
 
 class LoginController {
@@ -34,12 +35,21 @@ class LoginController {
 
     try {
       Map<String, dynamic> response = await _apiService.login(email, password);
+      print('Response: $response');
 
       if (context.mounted) {
-        MyToastBar.showSuccess(context, 'Inicio de sesión exitoso');
-
+        final String userType = response['user_type'];
+        
         _sharedPref.save('token', response['token']);
-        context.goNamed(MainScreen.name);
+        _sharedPref.save('user_type', userType);
+        
+        if (userType == 'user') {
+          context.goNamed(MainScreen.name);
+        } else if (userType == 'nutritionist') {
+          context.goNamed(MainScreen1.name);
+        }
+        
+        MyToastBar.showSuccess(context, 'Inicio de sesión exitoso');
       }
     } catch (e) {
       if (context.mounted) {

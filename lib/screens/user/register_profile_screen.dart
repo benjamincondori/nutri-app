@@ -50,8 +50,6 @@ class RegisterProfileScreenState extends ConsumerState<RegisterProfileScreen> {
   void initState() {
     super.initState();
 
-    print('User ID: ${widget.userId}');
-
     // Se ejecuta despues del metodo build
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       _con.init(context, refresh);

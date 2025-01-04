@@ -48,6 +48,8 @@ class SplashScreenState extends ConsumerState<SplashScreen> {
         _con.checkAuthSession(ref);
       },
     );
+    
+    _con.checkAuthSession(ref);
   }
 
   // Inicia la animación del fade in

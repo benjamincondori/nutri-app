@@ -1,44 +1,52 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:nutrition_ai_app/screens/food/food_create_screen.dart';
 
 import '../../config/theme/my_colors.dart';
-import '../../models/food.dart';
+import '../../providers/food_provider.dart';
+import '../../providers/user_provider.dart';
 
-class FoodDetailScreen extends StatelessWidget {
+class FoodDetailScreen extends ConsumerWidget {
   static const String name = 'food_detail_screen';
 
-  final Food food;
-
-  const FoodDetailScreen({super.key, required this.food});
+  const FoodDetailScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final userNutritionist = ref.watch(userNutritionistProvider);
+
     return Scaffold(
       body: Stack(
         children: [
-          _buildImage(context), // Imagen en la parte superior
-          _buildFoodInfo(context), // Información sobre el alimento
+          _buildImage(context, ref), // Imagen en la parte superior
+          _buildFoodInfo(context, ref), // Información sobre el alimento
           _buttomBack(context), // Botón de regreso
+
+          if (userNutritionist != null)
+            _buttomEdit(context, ref), // Botón de edición
         ],
       ),
     );
   }
 
   // Imagen en la parte superior
-  Widget _buildImage(BuildContext context) {
+  Widget _buildImage(BuildContext context, WidgetRef ref) {
+    final food = ref.watch(selectedFoodProvider);
     return Positioned.fill(
       top: 0,
       bottom: MediaQuery.of(context).size.height * 0.4,
       child: Image.network(
-        food.imageUrl,
+        food!.imageUrl!,
         fit: BoxFit.cover,
       ),
     );
   }
 
   // Información sobre el alimento
-  Widget _buildFoodInfo(BuildContext context) {
+  Widget _buildFoodInfo(BuildContext context, WidgetRef ref) {
+    final food = ref.watch(selectedFoodProvider);
     return DraggableScrollableSheet(
       initialChildSize: 0.5, // Tamaño inicial (50% de la pantalla)
       minChildSize: 0.5, // Tamaño mínimo (50% de la pantalla)
@@ -79,7 +87,7 @@ class FoodDetailScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        food.name,
+                        food!.name,
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -97,7 +105,9 @@ class FoodDetailScreen extends StatelessWidget {
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           children: [
-                            _nutrientInfoCard("Calorías", "${food.calories} kcal",
+                            _nutrientInfoCard(
+                                "Calorías",
+                                "${food.calories} kcal",
                                 Icons.local_fire_department),
                             _nutrientInfoCard("Proteínas", "${food.proteins} g",
                                 Icons.fitness_center),
@@ -208,6 +218,52 @@ class FoodDetailScreen extends StatelessWidget {
           ),
           child: const Icon(
             CupertinoIcons.back,
+            color: Colors.white,
+            size: 30,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buttomEdit(BuildContext context, WidgetRef ref) {
+    return Positioned(
+      top: 40, // Ajusta la posición vertical
+      right: 25, // Ajusta la posición horizontal
+      child: GestureDetector(
+        onTap: () {
+          // Obtener el alimento seleccionado
+          final foodEdit = ref.read(selectedFoodProvider);
+
+          context.pushNamed(
+            FoodCreateScreen.name,
+            extra: {
+              "food": foodEdit,
+            },
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [
+                Colors.blue, // Color inicial del gradiente
+                Colors.blue, // Color final del gradiente
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.blue.withOpacity(0.5),
+                blurRadius: 10,
+                offset: const Offset(0, 5),
+              ),
+            ],
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: const Icon(
+            Icons.edit,
             color: Colors.white,
             size: 30,
           ),

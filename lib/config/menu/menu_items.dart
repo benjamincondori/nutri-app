@@ -46,11 +46,41 @@ const appMenuItems = <MenuItem>[
     iconSelected: Iconsax.lamp_charge5,
   ),
   MenuItem(
-    title: 'Mi Perfil', 
-    subTitle: 'Perfil de usuario', 
-    link: '/theme-changer', 
+    title: 'Mi Perfil',
+    subTitle: 'Perfil de usuario',
+    link: '/theme-changer',
     icon: Iconsax.tag_user,
-    iconSelected: Iconsax.tag_user5
+    iconSelected: Iconsax.tag_user5,
   ),
-  
+];
+
+const appMenuItems1 = <MenuItem>[
+  MenuItem(
+    title: 'Inicio',
+    subTitle: 'Pantalla de inicio',
+    link: '/',
+    icon: Iconsax.home,
+    iconSelected: Iconsax.home_15,
+  ),
+  MenuItem(
+    title: 'Planes',
+    subTitle: 'Planes de alimentación',
+    link: '/buttons',
+    icon: Iconsax.menu_board,
+    iconSelected: Iconsax.menu_board5,
+  ),
+  MenuItem(
+    title: 'Comidas',
+    subTitle: 'Lista de comidas',
+    link: '/cards',
+    icon: Icons.restaurant_outlined,
+    iconSelected: Icons.restaurant,
+  ),
+  MenuItem(
+    title: 'Alimentos',
+    subTitle: 'Lista de alimentos',
+    link: '/theme-changer',
+    icon: Icons.fastfood_outlined,
+    iconSelected: Icons.fastfood,
+  ),
 ];

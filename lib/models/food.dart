@@ -1,14 +1,17 @@
 class Food {
-  late String benefits;
-  late double calories;
-  late double carbohydrates;
-  late String category;
-  late String description;
-  late double fats;
-  late int id;
-  late String imageUrl;
-  late String name;
-  late double proteins;
+  final String benefits;
+  final double calories;
+  final double carbohydrates;
+  final String category;
+  final String description;
+  final double fats;
+  final int? id;
+  final String? imageUrl;
+  final String name;
+  final double proteins;
+
+  final double? quantity;
+  final String? typeQuantity;
 
   Food({
     required this.benefits,
@@ -17,10 +20,12 @@ class Food {
     required this.category,
     required this.description,
     required this.fats,
-    required this.id,
-    required this.imageUrl,
+    this.id,
+    this.imageUrl,
     required this.name,
     required this.proteins,
+    this.quantity,
+    this.typeQuantity,
   });
 
   Food copyWith({
@@ -34,6 +39,8 @@ class Food {
     String? imageUrl,
     String? name,
     double? proteins,
+    double? quantity,
+    String? typeQuantity,
   }) =>
       Food(
         benefits: benefits ?? this.benefits,
@@ -46,6 +53,8 @@ class Food {
         imageUrl: imageUrl ?? this.imageUrl,
         name: name ?? this.name,
         proteins: proteins ?? this.proteins,
+        quantity: quantity ?? this.quantity,
+        typeQuantity: typeQuantity ?? this.typeQuantity,
       );
 
   factory Food.fromJson(Map<String, dynamic> json) => Food(
@@ -59,6 +68,8 @@ class Food {
         imageUrl: json["image_url"],
         name: json["name"],
         proteins: json["proteins"]?.toDouble(),
+        quantity: json["quantity"]?.toDouble(),
+        typeQuantity: json["type_quantity"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -72,10 +83,12 @@ class Food {
         "image_url": imageUrl,
         "name": name,
         "proteins": proteins,
+        "quantity": quantity,
+        "type_quantity": typeQuantity,
       };
-      
+
   @override
   String toString() {
-    return '{id: $id, name: $name, category: $category, description: $description, benefits: $benefits, calories: $calories, carbohydrates: $carbohydrates, fats: $fats, proteins: $proteins, imageUrl: $imageUrl}';
+    return '{id: $id, name: $name, category: $category, description: $description, benefits: $benefits, calories: $calories, carbohydrates: $carbohydrates, fats: $fats, proteins: $proteins, imageUrl: $imageUrl}, quantity: $quantity, typeQuantity: $typeQuantity';
   }
 }

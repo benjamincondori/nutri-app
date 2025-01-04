@@ -36,15 +36,17 @@ class User {
         urlImage: urlImage ?? this.urlImage,
       );
 
-  factory User.fromJson(Map<String, dynamic> json) => User(
-        email: json["email"],
-        healthProfile: HealthProfile1.fromJson(json["health_profile"]),
-        id: json["id"],
-        lastname: json["lastname"],
-        name: json["name"],
-        telephone: json["telephone"],
-        urlImage: json["url_image"],
-      );
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      email: json["email"],
+      healthProfile: HealthProfile1.fromJson(json["health_profile"]),
+      id: json["id"],
+      lastname: json["lastname"],
+      name: json["name"],
+      telephone: json["telephone"],
+      urlImage: json["url_image"],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "email": email,
@@ -119,5 +121,66 @@ class HealthProfile1 {
         "update_date": updateDate.toIso8601String(),
         "user_id": userId,
         "weight": weight,
+      };
+}
+
+class UserNutritionist {
+  final String email;
+  final int id;
+  final String lastname;
+  final String name;
+  final String telephone;
+  final String urlImage;
+  final String type;
+
+  UserNutritionist({
+    required this.email,
+    required this.id,
+    required this.lastname,
+    required this.name,
+    required this.telephone,
+    required this.urlImage,
+    required this.type,
+  });
+
+  UserNutritionist copyWith({
+    String? email,
+    int? id,
+    String? lastname,
+    String? name,
+    String? telephone,
+    String? urlImage,
+    String? type,
+  }) =>
+      UserNutritionist(
+        email: email ?? this.email,
+        id: id ?? this.id,
+        lastname: lastname ?? this.lastname,
+        name: name ?? this.name,
+        telephone: telephone ?? this.telephone,
+        urlImage: urlImage ?? this.urlImage,
+        type: type ?? this.type,
+      );
+
+  factory UserNutritionist.fromJson(Map<String, dynamic> json) {
+    return UserNutritionist(
+      email: json["email"],
+      id: json["id"],
+      lastname: json["lastname"],
+      name: json["name"],
+      telephone: json["telephone"],
+      urlImage: json["url_image"],
+      type: json["type"],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        "email": email,
+        "id": id,
+        "lastname": lastname,
+        "name": name,
+        "telephone": telephone,
+        "url_image": urlImage,
+        "type": type,
       };
 }

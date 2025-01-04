@@ -11,6 +11,12 @@ Future<void> main() async {
   runApp(const ProviderScope(child: MainApp()));
 }
 
+// juan.perez@example.com
+// securepassword123
+
+// laura.martinez@gmail.com
+// laura123
+
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
 

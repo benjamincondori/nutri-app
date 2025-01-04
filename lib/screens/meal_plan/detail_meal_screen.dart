@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../config/theme/my_colors.dart';
 import '../../shared/appbar_with_back.dart';
 
-class MealDetailScreen extends StatefulWidget {
+class MealPlanDetailScreen extends StatefulWidget {
   static const String name = 'detail_meal_plan_screen';
 
   final String mealType; // "Desayuno", "Almuerzo", "Cena"
@@ -13,7 +13,7 @@ class MealDetailScreen extends StatefulWidget {
   final double proteins;
   final double carbs;
 
-  const MealDetailScreen({
+  const MealPlanDetailScreen({
     super.key,
     required this.mealType,
     required this.mealName,
@@ -24,10 +24,10 @@ class MealDetailScreen extends StatefulWidget {
   });
 
   @override
-  State<MealDetailScreen> createState() => _MealDetailScreenState();
+  State<MealPlanDetailScreen> createState() => _MealPlanDetailScreenState();
 }
 
-class _MealDetailScreenState extends State<MealDetailScreen> {
+class _MealPlanDetailScreenState extends State<MealPlanDetailScreen> {
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white;
   Color _textColor = Colors.black;

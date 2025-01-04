@@ -41,4 +41,22 @@ class LoginService {
       throw Exception('Ocurrió un error al iniciar sesión');
     }
   }
+  
+  Future<bool> verifyToken(String token) async {
+    Uri url = Uri.http(_url, '$_api/verify-token');
+
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final response = await http.get(url, headers: headers);
+    
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
