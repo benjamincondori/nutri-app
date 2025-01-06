@@ -6,7 +6,9 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:nutrition_ai_app/controllers/meal/meal_controller.dart';
 import 'package:nutrition_ai_app/controllers/plan/plan_controller.dart';
+import 'package:nutrition_ai_app/screens/home/slider.dart';
 
 import '../../config/theme/my_colors.dart';
 import '../../models/current_plan.dart';
@@ -26,11 +28,13 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class HomeScreenState extends ConsumerState<HomeScreen> {
   final PlanController _con = PlanController();
+  final MealController _mealCon = MealController();
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white; // Color inicial del AppBar
   Color _textColor = Colors.black;
   Color _iconColor = MyColors.primaryColor;
   Color _iconBackgroundColor = MyColors.primarySwatch[50]!;
+  DateTime date = DateTime.now();
 
   @override
   void initState() {
@@ -38,6 +42,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
 
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       _con.init(context, refresh, ref);
+      _mealCon.init(context, refresh, ref);
     });
 
     _scrollController.addListener(() {
@@ -70,7 +75,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     final user = ref.watch(userProvider);
     final mealsForToday = ref.watch(currentMealsPlanProvider);
 
-    // loadData();
     print("Meals for today: $mealsForToday");
 
     // Si currentPlan es nulo, mostramos un mensaje o algo similar.
@@ -96,9 +100,10 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _dateTimeline(),
+              _dateTimeline(ref),
               const SizedBox(height: 20),
-              Expanded(
+              SizedBox(
+                height: 250,
                 child: DottedBorder(
                   radius: const Radius.circular(15),
                   borderType: BorderType.RRect,
@@ -167,11 +172,11 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _dateTimeline(),
+              _dateTimeline(ref),
               const SizedBox(height: 20),
               if (mealsForToday.isEmpty) ...[
                 SizedBox(
-                  height: 400,
+                  height: 250,
                   child: DottedBorder(
                     radius: const Radius.circular(15),
                     borderType: BorderType.RRect,
@@ -192,13 +197,46 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                   ),
                 ),
               ] else ...[
-                // Gráfico de progreso de calorías
-                _buildCaloriesProgressChart(),
+                const SizedBox(height: 10),
 
+                // Slider de macronutrientes
+                MacronutrientSliderWidget(
+                  consumedCalories: mealsForToday
+                      .where((meal) => meal.mealStatus == true)
+                      .map((meal) => meal.totalCalories)
+                      .fold(
+                          0,
+                          (previousValue, calories) =>
+                              previousValue + calories),
+                  targetCalories: mealsForToday
+                      .map((meal) => meal.totalCalories)
+                      .reduce((a, b) => a + b),
+                  consumedProtein: mealsForToday
+                      .where((meal) => meal.mealStatus == true)
+                      .map((meal) => meal.totalProteins)
+                      .fold(
+                          0,
+                          (previousValue, proteins) =>
+                              previousValue + proteins),
+                  targetProtein: mealsForToday
+                      .map((meal) => meal.totalProteins)
+                      .reduce((a, b) => a + b),
+                  consumedCarbs: mealsForToday
+                      .where((meal) => meal.mealStatus == true)
+                      .map((meal) => meal.totalCarbohydrates)
+                      .fold(0, (previousValue, carbs) => previousValue + carbs),
+                  targetCarbs: mealsForToday
+                      .map((meal) => meal.totalCarbohydrates)
+                      .reduce((a, b) => a + b),
+                  consumedFat: mealsForToday
+                      .where((meal) => meal.mealStatus == true)
+                      .map((meal) => meal.totalFats)
+                      .fold(0, (previousValue, fats) => previousValue + fats),
+                  targetFat: mealsForToday
+                      .map((meal) => meal.totalFats)
+                      .reduce((a, b) => a + b),
+                ),
                 const SizedBox(height: 30),
-
-                // Gráfico de progreso de agua
-                // _buildWaterProgressChart(),
 
                 // Plan del día
                 const Text(
@@ -285,46 +323,6 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  // Widget _buildWaterProgressChart() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       const Text(
-  //         "Agua Bebida",
-  //         style: TextStyle(
-  //           fontSize: 18,
-  //           fontWeight: FontWeight.bold,
-  //         ),
-  //       ),
-  //       const SizedBox(height: 10),
-  //       SizedBox(
-  //         height: 200,
-  //         child: BarChart(
-  //           BarChartData(
-  //             barGroups: [
-  //               BarChartGroupData(x: 0, barRods: [
-  //                 BarChartRodData(
-  //                   toY: 8, // Progreso en litros
-  //                   color: Colors.blue,
-  //                   width: 20,
-  //                 ),
-  //               ]),
-  //               BarChartGroupData(x: 1, barRods: [
-  //                 BarChartRodData(
-  //                   toY: 12, // Objetivo en litros
-  //                   color: Colors.grey[300]!,
-  //                   width: 20,
-  //                 ),
-  //               ]),
-  //             ],
-  //             titlesData: FlTitlesData(show: false),
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Widget buildMealCard(Meals meal) {
     // Función para obtener el ícono según el tipo de comida
     IconData getMealIcon(String type) {
@@ -340,8 +338,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       }
     }
 
-    // bool isEaten = false; // Estado para marcar o desmarcar
-    // bool isEaten = mealStates[meal.mealId] ?? false; // Estado inicial
+    bool isEaten = meal.mealStatus; // Estado para marcar o desmarcar
 
     return StatefulBuilder(
       builder: (context, setState) {
@@ -408,16 +405,14 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
                     // Checkbox a la derecha
-                    // Checkbox(
-                    //   value: isEaten,
-                    //   onChanged: (bool? value) {
-                    //     setState(() {
-                    //       // isEaten = value ?? false;
-                    //       toggleMealState(meal.mealId, value ?? false);
-                    //     });
-                    //   },
-                    //   activeColor: MyColors.primarySwatch,
-                    // ),
+                    Checkbox(
+                      value: isEaten,
+                      onChanged: (bool? value) async {
+                        await _mealCon.toggleMealStatus(meal.mealId,
+                            date: date);
+                      },
+                      activeColor: MyColors.primarySwatch,
+                    ),
                   ],
                 ),
               ),
@@ -428,12 +423,13 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _dateTimeline() {
+  Widget _dateTimeline(WidgetRef ref) {
     return EasyDateTimeLine(
       initialDate: DateTime.now(),
       activeColor: MyColors.primaryColor,
       onDateChange: (selectedDate) {
-        _con.loadDataMeals(selectedDate);
+        date = selectedDate;
+        loadDataMeals(date, ref);
       },
       locale: 'es_ES',
       headerProps: const EasyHeaderProps(

@@ -104,5 +104,31 @@ class MealService {
       throw Exception('Ocurrió un error al obtener los alimentos de la comida');
     }
   }
-  
+
+  // Marcar una comida como consumida
+  Future<String> markAsConsumed(int mealId, String token) async {
+    Uri url = Uri.http(_url, '$_api/finish-meal');
+
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final response = await http.post(
+      url,
+      headers: headers,
+      body: json.encode({'meal_id': mealId}),
+    );
+
+    if (response.statusCode == 200) {
+      // Si la respuesta es exitosa, retornamos los datos
+      final Map<String, dynamic> data = json.decode(response.body);
+      print("MealService::markAsConsumed::data: $data");
+      return data['message'];
+    } else {
+      // Si ocurre un error, devolvemos el mensaje original
+      throw Exception('Ocurrió un error al marcar la comida como consumida');
+    }
+  }
 }

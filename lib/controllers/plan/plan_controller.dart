@@ -33,7 +33,7 @@ class PlanController {
     _apiService.init(context);
 
     await getPlans();
-    await getCurrentPlan();
+    // await getCurrentPlan();
   }
 
   Future<void> generatePlan() async {
@@ -89,23 +89,23 @@ class PlanController {
     }
   }
 
-  Future<void> getCurrentPlan() async {
-    final token = await SharedPref().read('token');
+  // Future<void> getCurrentPlan() async {
+  //   final token = await SharedPref().read('token');
 
-    if (token != null) {
-      try {
-        final CurrentPlan plan = await _apiService.getCurrentPlan(token);
-        ref.read(currentPlanProvider.notifier).state = plan;
+  //   if (token != null) {
+  //     try {
+  //       final CurrentPlan plan = await _apiService.getCurrentPlan(token);
+  //       ref.read(currentPlanProvider.notifier).state = plan;
 
-        // Actualizar el estado de la comida seleccionada
-        loadDataMeals(DateTime.now());
+  //       // Actualizar el estado de la comida seleccionada
+  //       loadDataMeals(DateTime.now(), ref);
 
-        print("PlanController::getCurrentPlan::plan: $plan");
-      } catch (e) {
-        print(e);
-      }
-    }
-  }
+  //       print("PlanController::getCurrentPlan::plan: $plan");
+  //     } catch (e) {
+  //       print(e);
+  //     }
+  //   }
+  // }
 
   Future<void> getPlanById(int id) async {
     final token = await SharedPref().read('token');
@@ -135,35 +135,35 @@ class PlanController {
       print(e);
     }
   }
+}
 
-  loadDataMeals(DateTime currentDate) {
-    final currentPlan = ref.watch(currentPlanProvider);
+loadDataMeals(DateTime currentDate, WidgetRef ref) {
+  final currentPlan = ref.watch(currentPlanProvider);
 
-    if (currentPlan == null) {
-      return;
-    }
-
-    // Calculamos el día actual del plan con base en la fecha de inicio
-    DateTime startDate =
-        DateTime.parse(formatOnlyDate(currentPlan.dateGeneration));
-    int daysElapsed = currentDate.difference(startDate).inDays + 1;
-
-    // Extraemos los días únicos
-    Set<int> uniqueDays = currentPlan.meals.map((meal) => meal.day).toSet();
-
-    // El número de días únicos es el tamaño de ese conjunto
-    final numberOfDays = uniqueDays.length;
-
-    // Obtenemos las comidas para el día seleccionado
-    List<Meals> mealsForSelectedDay = [];
-
-    // Obtenemos el plan para el día correspondiente (asegurándonos de que el día no esté fuera del rango)
-    if (daysElapsed > 0 && daysElapsed <= numberOfDays) {
-      mealsForSelectedDay =
-          currentPlan.meals.where((meal) => meal.day == daysElapsed).toList();
-    }
-
-    // Actualizamos el estado con las comidas del día seleccionado
-    ref.read(currentMealsPlanProvider.notifier).state = mealsForSelectedDay;
+  if (currentPlan == null) {
+    return;
   }
+
+  // Calculamos el día actual del plan con base en la fecha de inicio
+  DateTime startDate =
+      DateTime.parse(formatOnlyDate(currentPlan.dateGeneration));
+  int daysElapsed = currentDate.difference(startDate).inDays + 1;
+
+  // Extraemos los días únicos
+  Set<int> uniqueDays = currentPlan.meals.map((meal) => meal.day).toSet();
+
+  // El número de días únicos es el tamaño de ese conjunto
+  final numberOfDays = uniqueDays.length;
+
+  // Obtenemos las comidas para el día seleccionado
+  List<Meals> mealsForSelectedDay = [];
+
+  // Obtenemos el plan para el día correspondiente (asegurándonos de que el día no esté fuera del rango)
+  if (daysElapsed > 0 && daysElapsed <= numberOfDays) {
+    mealsForSelectedDay =
+        currentPlan.meals.where((meal) => meal.day == daysElapsed).toList();
+  }
+
+  // Actualizamos el estado con las comidas del día seleccionado
+  ref.read(currentMealsPlanProvider.notifier).state = mealsForSelectedDay;
 }

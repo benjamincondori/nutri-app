@@ -6,6 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:nutrition_ai_app/models/current_plan.dart';
 
 import '../../config/theme/my_colors.dart';
+import '../../controllers/meal/meal_controller.dart';
 import '../../controllers/plan/plan_controller.dart';
 import '../../providers/plan_provider.dart';
 import '../../shared/appbar_with_back.dart';
@@ -25,6 +26,7 @@ class PlanDetailScreen extends ConsumerStatefulWidget {
 
 class PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
   final PlanController _con = PlanController();
+  final MealController _mealCon = MealController();
 
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white;
@@ -34,7 +36,7 @@ class PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
 
   final Map<int, bool> mealStates =
       {}; // Map para almacenar el estado del checkbox
-  late List<Meals> meals = []; // Lista de comidas
+  // late List<Meals> meals = []; // Lista de comidas
 
   @override
   void initState() {
@@ -42,6 +44,7 @@ class PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
 
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       _con.init(context, refresh, ref);
+      _mealCon.init(context, refresh, ref);
     });
 
     _scrollController.addListener(() {
@@ -62,23 +65,23 @@ class PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
     });
   }
 
-  void loadMealStatus() {
-    final planDetail = ref.watch(selectedPlanProvider);
-    meals = planDetail!.meals;
+  // void loadMealStatus() {
+  //   final planDetail = ref.watch(selectedPlanProvider);
+  //   meals = planDetail!.meals;
 
-    // Inicializa el estado de los checkboxes a partir de meal_status
-    for (Meals meal in meals) {
-      mealStates[meal.mealId] = meal.mealStatus == true;
-    }
-  }
+  //   // Inicializa el estado de los checkboxes a partir de meal_status
+  //   for (Meals meal in meals) {
+  //     mealStates[meal.mealId] = meal.mealStatus == true;
+  //   }
+  // }
 
-  void toggleMealState(int id, bool value) {
-    setState(() {
-      mealStates[id] = value;
-      final meal = meals.firstWhere((meal) => meal.mealId == id);
-      meal.mealStatus = value;
-    });
-  }
+  // void toggleMealState(int id, bool value) {
+  //   setState(() {
+  //     mealStates[id] = value;
+  //     final meal = meals.firstWhere((meal) => meal.mealId == id);
+  //     meal.mealStatus = value;
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -88,7 +91,7 @@ class PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    loadMealStatus();
+    // loadMealStatus();
     final planDetail = ref.watch(selectedPlanProvider);
     final mealsByDay = groupMealsByDay(planDetail!.meals);
 
@@ -199,7 +202,7 @@ class PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        planDetail.calories.toStringAsFixed(1),
+                        '${planDetail.calories.toStringAsFixed(1)} kcal',
                       ),
                     ],
                   ),
@@ -276,8 +279,8 @@ class PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
       }
     }
 
-    // bool isEaten = false; // Estado para marcar o desmarcar
-    bool isEaten = mealStates[meal.mealId] ?? false; // Estado inicial
+    bool isEaten = meal.mealStatus; // Estado para marcar o desmarcar
+    // bool isEaten = mealStates[meal.mealId] ?? false; // Estado inicial
 
     return StatefulBuilder(
       builder: (context, setState) {
@@ -346,11 +349,12 @@ class PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
                     // Checkbox a la derecha
                     Checkbox(
                       value: isEaten,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          // isEaten = value ?? false;
-                          toggleMealState(meal.mealId, value ?? false);
-                        });
+                      onChanged: (bool? value) async {
+                        // setState(() {
+                        // isEaten = value ?? false;
+                        // toggleMealState(meal.mealId, value ?? false);
+                        await _mealCon.toggleMealStatus(meal.mealId);
+                        // });
                       },
                       activeColor: MyColors.primarySwatch,
                     ),
