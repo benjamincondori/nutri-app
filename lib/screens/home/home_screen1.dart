@@ -442,3 +442,17 @@ class HomeScreen1State extends ConsumerState<HomeScreen1> {
   //   );
   // }
 }
+
+class MealPlanItem {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+
+  const MealPlanItem({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.color,
+  });
+}

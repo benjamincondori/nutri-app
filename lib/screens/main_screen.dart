@@ -29,7 +29,7 @@ class MainScreenState extends ConsumerState<MainScreen> {
   // Lista de las vistas correspondientes a cada tab
   final List<Widget> _screens = [
     const HomeScreen(),
-    const LoginScreen(),
+    const PlanListScreen(),
     const FoodListScreen(),
     const ProfileScreen(),
   ];

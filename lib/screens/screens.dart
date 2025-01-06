@@ -17,5 +17,7 @@ export 'package:nutrition_ai_app/screens/food/food_create_screen.dart';
 export 'package:nutrition_ai_app/screens/meal/meal_list_screen.dart';
 export 'package:nutrition_ai_app/screens/meal/meal_create_screen.dart';
 export 'package:nutrition_ai_app/screens/meal/meal_detail_screen.dart';
+export 'package:nutrition_ai_app/screens/plan/plan_list_screen.dart';
+export 'package:nutrition_ai_app/screens/plan/plan_detail_screen.dart';
 
 

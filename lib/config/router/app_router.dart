@@ -124,5 +124,20 @@ final GoRouter appRouter = GoRouter(
       name: NotificationsScreen.name,
       builder: (context, state) => const NotificationsScreen(),
     ),
+    GoRoute(
+      path: '/plan/list',
+      name: PlanListScreen.name,
+      builder: (context, state) => const PlanListScreen(),
+    ),
+    GoRoute(
+      path: '/plan/detail',
+      name: PlanDetailScreen.name,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return PlanDetailScreen(
+          planTitle: extra?['planTitle'] as String,
+        ); 
+      },
+    ),
   ],
 );

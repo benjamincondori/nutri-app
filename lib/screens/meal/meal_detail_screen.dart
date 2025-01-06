@@ -9,6 +9,7 @@ import '../../config/theme/my_colors.dart';
 import '../../models/food.dart';
 import '../../providers/food_provider.dart';
 import '../../providers/meal_provider.dart';
+import '../../providers/user_provider.dart';
 import '../../shared/appbar_with_back.dart';
 import '../screens.dart';
 
@@ -65,6 +66,7 @@ class MealDetailScreenState extends ConsumerState<MealDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final mealDetail = ref.watch(selectedMealProvider);
+    final userNutritionist = ref.watch(userNutritionistProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -85,35 +87,38 @@ class MealDetailScreenState extends ConsumerState<MealDetailScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    mealDetail.meal.name,
-                    style: const TextStyle(
+                  const Text(
+                    // mealDetail.meal.name,
+                    "Macronutrientes:",
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Viga',
                     ),
                   ),
-                  IconButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(Colors.blue),
-                      shape: WidgetStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                  if (userNutritionist != null) ...[
+                    IconButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(Colors.blue),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
                         ),
                       ),
+                      color: Colors.white,
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        // Acción del botón de editar comida
+                        context.pushNamed(
+                          MealCreateScreen.name,
+                          extra: {
+                            'meal': mealDetail.meal,
+                          },
+                        );
+                      },
                     ),
-                    color: Colors.white,
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      // Acción del botón de editar comida
-                      context.pushNamed(
-                        MealCreateScreen.name,
-                        extra: {
-                          'meal': mealDetail.meal,
-                        },
-                      );
-                    },
-                  ),
+                  ]
                 ],
               ),
 
@@ -121,24 +126,28 @@ class MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
               // Información nutricional
               SizedBox(
-                height: 70,
+                height: 100,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
                     _nutrientInfoCard(
+                      "Calorías",
                       "${mealDetail.meal.totalCalories.toStringAsFixed(1)} kcal",
                       Icons.local_fire_department,
                     ),
                     _nutrientInfoCard(
-                      "${mealDetail.meal.totalProteins.toStringAsFixed(1)} g Proteínas",
+                      "Proteínas",
+                      "${mealDetail.meal.totalProteins.toStringAsFixed(1)} g",
                       Icons.fitness_center,
                     ),
                     _nutrientInfoCard(
-                      "${mealDetail.meal.totalFats.toStringAsFixed(1)} g Grasas",
+                      "Grasas",
+                      "${mealDetail.meal.totalFats.toStringAsFixed(1)} g",
                       Icons.opacity,
                     ),
                     _nutrientInfoCard(
-                      "${mealDetail.meal.totalCarbohydrates.toStringAsFixed(1)} g Carbohidratos",
+                      "Carbohidratos",
+                      "${mealDetail.meal.totalCarbohydrates.toStringAsFixed(1)} g",
                       Icons.grain,
                     ),
                   ],
@@ -158,23 +167,25 @@ class MealDetailScreenState extends ConsumerState<MealDetailScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  IconButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStateProperty.all(MyColors.primaryColor),
-                      shape: WidgetStateProperty.all(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                  if (userNutritionist != null) ...[
+                    IconButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStateProperty.all(MyColors.primaryColor),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
                         ),
                       ),
+                      color: Colors.white,
+                      icon: const Icon(Icons.add),
+                      onPressed: () {
+                        // Acción del botón para agregar alimentos
+                        _showAddFoodForm(context);
+                      },
                     ),
-                    color: Colors.white,
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      // Acción del botón para agregar alimentos
-                      _showAddFoodForm(context);
-                    },
-                  ),
+                  ],
                 ],
               ),
 
@@ -214,28 +225,29 @@ class MealDetailScreenState extends ConsumerState<MealDetailScreen> {
     );
   }
 
-  // Widget para mostrar la información nutricional
-  Widget _nutrientInfoCard(String label, IconData icon) {
+  Widget _nutrientInfoCard(String label, String value, IconData icon) {
     return Container(
-      // constraints: const BoxConstraints(
-      //   minWidth: 100,
-      // ),
+      constraints: const BoxConstraints(
+        minWidth: 100,
+      ),
       margin: const EdgeInsets.only(right: 10),
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: MyColors.primaryColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(15),
       ),
-      child: Row(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, color: MyColors.primaryColor),
-          const SizedBox(width: 5),
+          const SizedBox(height: 5),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 12, color: Colors.black54),
           ),
         ],
       ),
@@ -244,6 +256,8 @@ class MealDetailScreenState extends ConsumerState<MealDetailScreen> {
 
   // Widget para construir cada ítem de alimento
   Widget _buildFoodItem(Food food) {
+    final userNutritionist = ref.watch(userNutritionistProvider);
+
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: 10.0),
       leading: CircleAvatar(
@@ -260,13 +274,15 @@ class MealDetailScreenState extends ConsumerState<MealDetailScreen> {
               fontSize: 16,
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.delete, color: Colors.red),
-            onPressed: () {
-              // Mostrar diálogo de confirmación para eliminar el alimento
-              _showDeleteConfirmationDialog(food);
-            },
-          ),
+          if (userNutritionist != null) ...[
+            IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPressed: () {
+                // Mostrar diálogo de confirmación para eliminar el alimento
+                _showDeleteConfirmationDialog(food);
+              },
+            ),
+          ],
         ],
       ),
       subtitle: Text(

@@ -4,7 +4,6 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:nutrition_ai_app/screens/meal/meal_create_screen.dart';
 import 'package:nutrition_ai_app/screens/screens.dart';
 
 import '../../config/theme/my_colors.dart';

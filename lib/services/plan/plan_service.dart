@@ -43,7 +43,7 @@ class PlanService {
   }
 
   Future<List<Plan>> getPlans(String token) async {
-    Uri url = Uri.http(_url, '$_api/plans');
+    Uri url = Uri.http(_url, '$_api/get-plans');
 
     Map<String, String> headers = {
       'Content-type': 'application/json',
