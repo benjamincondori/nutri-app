@@ -58,6 +58,11 @@ final GoRouter appRouter = GoRouter(
       },
     ),
     GoRoute(
+      path: '/user/edit-profile',
+      name: EditProfileScreen.name,
+      builder: (context, state) => const EditProfileScreen(),
+    ),
+    GoRoute(
       path: '/meal/list',
       name: MealListScreen.name,
       builder: (context, state) => const MealListScreen(),
@@ -136,7 +141,7 @@ final GoRouter appRouter = GoRouter(
         final extra = state.extra as Map<String, dynamic>?;
         return PlanDetailScreen(
           planTitle: extra?['planTitle'] as String,
-        ); 
+        );
       },
     ),
     GoRoute(
@@ -148,6 +153,16 @@ final GoRouter appRouter = GoRouter(
       path: '/payment',
       name: PaymentMethodsScreen.name,
       builder: (context, state) => const PaymentMethodsScreen(),
+    ),
+    GoRoute(
+      path: '/change-password',
+      name: ChangePasswordScreen.name,
+      builder: (context, state) => const ChangePasswordScreen(),
+    ),
+    GoRoute(
+      path: '/users',
+      name: UsersListScreen.name,
+      builder: (context, state) => const UsersListScreen(),
     ),
   ],
 );

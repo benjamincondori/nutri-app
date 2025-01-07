@@ -65,11 +65,11 @@ const appMenuItems1 = <MenuItem>[
     iconSelected: Iconsax.home_15,
   ),
   MenuItem(
-    title: 'Planes',
-    subTitle: 'Planes de alimentación',
-    link: '/buttons',
-    icon: Iconsax.menu_board,
-    iconSelected: Iconsax.menu_board5,
+    title: 'Usuarios',
+    subTitle: 'Lista de usuarios',
+    link: '/users',
+    icon: Iconsax.profile_2user,
+    iconSelected: Iconsax.profile_2user5,
   ),
   MenuItem(
     title: 'Comidas',

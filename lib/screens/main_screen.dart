@@ -38,7 +38,7 @@ class MainScreenState extends ConsumerState<MainScreen> {
   void initState() {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      _con.init(context);
+      _con.init(context, refresh);
     });
   }
 
@@ -66,5 +66,9 @@ class MainScreenState extends ConsumerState<MainScreen> {
         ),
       ),
     );
+  }
+  
+  void refresh() {
+    setState(() {});
   }
 }

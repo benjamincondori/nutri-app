@@ -17,8 +17,8 @@ Future<void> main() async {
 // juan.perez@example.com
 // securepassword123
 
-// laura.martinez@gmail.com
-// laura123
+// marcos@gmail.com
+// 123456
 
 Future<void> _setup() async {
   WidgetsFlutterBinding.ensureInitialized();

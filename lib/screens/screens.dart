@@ -21,5 +21,8 @@ export 'package:nutrition_ai_app/screens/plan/plan_list_screen.dart';
 export 'package:nutrition_ai_app/screens/plan/plan_detail_screen.dart';
 export 'package:nutrition_ai_app/screens/reports/reports_screen.dart';
 export 'package:nutrition_ai_app/screens/pyment/pyment_screen.dart';
+export 'package:nutrition_ai_app/screens/user/edit_profile_screen.dart';
+export 'package:nutrition_ai_app/screens/user/change_passsword.dart';
+export 'package:nutrition_ai_app/screens/user/users_screen.dart';
 
 

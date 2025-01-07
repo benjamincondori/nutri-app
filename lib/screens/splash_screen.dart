@@ -24,7 +24,7 @@ class SplashScreenState extends ConsumerState<SplashScreen> {
     _startAnimation(); // Inicia la animación
     _startSplashScreenTimer(); // Navega después de la animación
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      _con.init(context);
+      _con.init(context, refresh);
     });
   }
   
@@ -162,5 +162,9 @@ class SplashScreenState extends ConsumerState<SplashScreen> {
         ),
       ],
     );
+  }
+  
+  void refresh() {
+    setState(() {});
   }
 }

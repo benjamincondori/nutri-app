@@ -1,13 +1,12 @@
-import 'package:easy_date_timeline/easy_date_timeline.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:nutrition_ai_app/controllers/user/user_controller.dart';
 
 import '../../config/theme/my_colors.dart';
+import '../../providers/totals_provider.dart';
 import '../../providers/user_provider.dart';
 import '../../shared/appbar.dart';
-import '../screens.dart';
 
 class HomeScreen1 extends ConsumerStatefulWidget {
   static const String name = 'home_screen_1';
@@ -19,36 +18,21 @@ class HomeScreen1 extends ConsumerStatefulWidget {
 }
 
 class HomeScreen1State extends ConsumerState<HomeScreen1> {
+  final UserController _con = UserController();
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white; // Color inicial del AppBar
   Color _textColor = Colors.black;
   Color _iconColor = MyColors.primaryColor;
   Color _iconBackgroundColor = MyColors.primarySwatch[50]!;
 
-  final List<MealPlanItem> _mealPlan = [
-    const MealPlanItem(
-      title: 'Desayuno',
-      subtitle: 'Avena con frutas y nueces',
-      icon: Icons.breakfast_dining,
-      color: Colors.green,
-    ),
-    const MealPlanItem(
-      title: 'Almuerzo',
-      subtitle: 'Ensalada de pollo y quinoa',
-      icon: Icons.lunch_dining,
-      color: Colors.green,
-    ),
-    const MealPlanItem(
-      title: 'Cena',
-      subtitle: 'Salmón con espárragos',
-      icon: Icons.dinner_dining,
-      color: Colors.green,
-    ),
-  ];
-
   @override
   void initState() {
     super.initState();
+
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _con.init(context, refresh, ref: ref);
+    });
+
     _scrollController.addListener(() {
       // Cambiar el color del AppBar cuando se haga scroll
       setState(() {
@@ -75,7 +59,10 @@ class HomeScreen1State extends ConsumerState<HomeScreen1> {
 
   @override
   Widget build(BuildContext context) {
+    _con.getTotals(ref);
+
     final user = ref.watch(userNutritionistProvider);
+    final totals = ref.watch(totalsProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -90,226 +77,49 @@ class HomeScreen1State extends ConsumerState<HomeScreen1> {
       ),
       body: SingleChildScrollView(
         controller: _scrollController,
-        padding: const EdgeInsets.only(
-          left: 25,
-          right: 25,
-          top: 10,
-          bottom: 25,
-        ),
+        padding:
+            const EdgeInsets.only(left: 25, right: 25, top: 10, bottom: 25),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _dateTimeline(),
+            const SizedBox(height: 30),
+            _buildStatisticsCard(
+              'Usuarios',
+              totals?.totalUsers.toString() ?? '0',
+              Icons.people,
+              MyColors.primaryColor,
+            ),
             const SizedBox(height: 20),
-
-            // Gráfico de progreso de calorías
-
-            _buildCaloriesProgressChart(),
-
-            const SizedBox(height: 30),
-
-            // Gráfico de progreso de agua
-            // _buildWaterProgressChart(),
-
-            // Plan del día
-            _buildMealPlan(),
-
-            // const SizedBox(height: 30),
-
-            // Sugerencias de recetas
-            // _buildRecipeSuggestions(),
-
-            const SizedBox(height: 30),
+            _buildStatisticsCard(
+              'Planes Generados',
+              totals?.totalPlans.toString() ?? '0',
+              Icons.calendar_today,
+              MyColors.primaryColor,
+            ),
+            const SizedBox(height: 20),
+            _buildStatisticsCard(
+              'Comidas',
+              totals?.totalMeals.toString() ?? '0',
+              Icons.fastfood,
+              MyColors.primaryColor,
+            ),
+            const SizedBox(height: 20),
+            _buildStatisticsCard(
+              'Alimentos',
+              totals?.totalFoods.toString() ?? '0',
+              Icons.food_bank,
+              MyColors.primaryColor,
+            ),
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () {
-      //     context.pushNamed(CreateMealPlanScreen.name);
-      //   },
-      //   label: const Row(
-      //     children: [
-      //       Icon(Iconsax.box_add, color: Colors.white),
-      //       SizedBox(width: 8),
-      //       Text(
-      //         'Crear Plan',
-      //         style: TextStyle(
-      //           fontWeight: FontWeight.bold,
-      //           fontFamily: 'Viga',
-      //           fontSize: 16,
-      //           color: Colors.white,
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      //   backgroundColor: MyColors.primaryColor,
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
-  Widget _buildCaloriesProgressChart() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Calorías Consumidas",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Viga',
-          ),
-        ),
-        const SizedBox(height: 10),
-        SizedBox(
-          height: 200,
-          child: PieChart(
-            PieChartData(
-              sections: [
-                PieChartSectionData(
-                  color: Colors.green,
-                  value: 75, // Progreso
-                  title: '75%',
-                  radius: 60,
-                  titleStyle: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                PieChartSectionData(
-                  color: Colors.grey[300]!,
-                  value: 25, // Lo que falta
-                  title: '',
-                  radius: 60,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // Widget _buildWaterProgressChart() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       const Text(
-  //         "Agua Bebida",
-  //         style: TextStyle(
-  //           fontSize: 18,
-  //           fontWeight: FontWeight.bold,
-  //         ),
-  //       ),
-  //       const SizedBox(height: 10),
-  //       SizedBox(
-  //         height: 200,
-  //         child: BarChart(
-  //           BarChartData(
-  //             barGroups: [
-  //               BarChartGroupData(x: 0, barRods: [
-  //                 BarChartRodData(
-  //                   toY: 8, // Progreso en litros
-  //                   color: Colors.blue,
-  //                   width: 20,
-  //                 ),
-  //               ]),
-  //               BarChartGroupData(x: 1, barRods: [
-  //                 BarChartRodData(
-  //                   toY: 12, // Objetivo en litros
-  //                   color: Colors.grey[300]!,
-  //                   width: 20,
-  //                 ),
-  //               ]),
-  //             ],
-  //             titlesData: FlTitlesData(show: false),
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  Widget _buildMealPlan() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Plan de Hoy",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Viga',
-          ),
-        ),
-        const SizedBox(height: 10),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: _mealPlan.length,
-          separatorBuilder: (context, index) =>
-              const SizedBox(height: 15), // Espacio entre elementos
-          itemBuilder: (context, index) {
-            final item = _mealPlan[index];
-            Map<String, dynamic> mealDetails;
-
-            // Aquí puedes cambiar los valores de acuerdo a cada item
-            if (item.title == "Desayuno") {
-              mealDetails = {
-                'mealType': "Desayuno",
-                'mealName': "Tostadas con Aguacate",
-                'calories': 300,
-                'fats': 15.0,
-                'proteins': 10.0,
-                'carbs': 35.0,
-              };
-            } else if (item.title == "Almuerzo") {
-              mealDetails = {
-                'mealType': "Almuerzo",
-                'mealName': "Ensalada César",
-                'calories': 450,
-                'fats': 20.0,
-                'proteins': 30.0,
-                'carbs': 40.0,
-              };
-            } else if (item.title == "Cena") {
-              mealDetails = {
-                'mealType': "Cena",
-                'mealName': "Salmón a la Plancha",
-                'calories': 500,
-                'fats': 25.0,
-                'proteins': 35.0,
-                'carbs': 20.0,
-              };
-            } else {
-              mealDetails = {
-                'mealType': "Snack",
-                'mealName': "Yogur con Frutas",
-                'calories': 150,
-                'fats': 5.0,
-                'proteins': 8.0,
-                'carbs': 20.0,
-              };
-            }
-
-            return _itemMealPlan(
-              item.title,
-              item.subtitle,
-              item.icon,
-              item.color,
-              mealDetails: mealDetails,
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _itemMealPlan(
-      String title, String subtitle, IconData icon, Color color,
-      {required Map<String, dynamic> mealDetails}) {
+  Widget _buildStatisticsCard(
+      String title, String count, IconData icon, Color color) {
     return Container(
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: MyColors.primarySwatch[50],
         borderRadius: BorderRadius.circular(15),
@@ -331,10 +141,8 @@ class HomeScreen1State extends ConsumerState<HomeScreen1> {
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: () {
-            context.pushNamed(
-              MealPlanDetailScreen.name,
-              extra: mealDetails,
-            );
+            // Acciones al hacer clic, si es necesario.
+            print('$title Card clicked');
           },
           splashColor: MyColors.primarySwatch[10],
           highlightColor: MyColors.primarySwatch[50],
@@ -343,7 +151,7 @@ class HomeScreen1State extends ConsumerState<HomeScreen1> {
           child: ListTile(
             leading: Icon(
               icon,
-              color: MyColors.primaryColor,
+              color: color,
             ),
             title: Text(
               title,
@@ -351,108 +159,20 @@ class HomeScreen1State extends ConsumerState<HomeScreen1> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            subtitle: Text(subtitle),
-            trailing: Icon(Icons.check_circle, color: color),
+            trailing: Text(
+              count,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _dateTimeline() {
-    return EasyDateTimeLine(
-      initialDate: DateTime.now(),
-      activeColor: MyColors.primaryColor,
-      onDateChange: (selectedDate) {
-        //[selectedDate] the new date selected.
-      },
-      locale: 'es_ES',
-      headerProps: const EasyHeaderProps(
-        dateFormatter: DateFormatter.fullDateDMonthAsStrY(),
-        selectedDateStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 17,
-        ),
-        monthStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 17,
-        ),
-        monthPickerType: MonthPickerType.switcher,
-      ),
-      dayProps: const EasyDayProps(
-        activeDayStyle: DayStyle(
-          dayNumStyle: TextStyle(
-            color: Colors.white,
-            fontSize: 21,
-            fontWeight: FontWeight.bold,
-          ),
-          dayStrStyle: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-          ),
-          monthStrStyle: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-          ),
-        ),
-      ),
-    );
+  void refresh() {
+    setState(() {});
   }
-
-  // Widget _buildRecipeSuggestions() {
-  //   return Column(
-  //     children: [
-  //       const Text(
-  //         "Sugerencias de Recetas:",
-  //         style: TextStyle(
-  //           fontSize: 20,
-  //           fontWeight: FontWeight.bold,
-  //           fontFamily: 'Viga',
-  //         ),
-  //       ),
-  //       const SizedBox(height: 10),
-  //       Card(
-  //         elevation: 4,
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(10),
-  //         ),
-  //         child: ListTile(
-  //           leading: const Icon(Icons.restaurant),
-  //           title: const Text('Ensalada Mediterránea'),
-  //           onTap: () {
-  //             // Acción para ver receta
-  //           },
-  //         ),
-  //       ),
-  //       const SizedBox(height: 10),
-  //       Card(
-  //         elevation: 4,
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(10),
-  //         ),
-  //         child: ListTile(
-  //           leading: const Icon(Icons.restaurant),
-  //           title: const Text('Batido de Proteínas'),
-  //           onTap: () {
-  //             // Acción para ver receta
-  //           },
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-}
-
-class MealPlanItem {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
-
-  const MealPlanItem({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.color,
-  });
 }

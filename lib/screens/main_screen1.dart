@@ -29,7 +29,7 @@ class MainScreen1State extends ConsumerState<MainScreen1> {
   // Lista de las vistas correspondientes a cada tab
   final List<Widget> _screens = [
     const HomeScreen1(),
-    const LoginScreen(),
+    const UsersListScreen(),
     const MealListScreen(),
     const FoodListScreen(),
   ];
@@ -38,7 +38,7 @@ class MainScreen1State extends ConsumerState<MainScreen1> {
   void initState() {
     super.initState();
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      _con.init(context);
+      _con.init(context, refresh);
     });
   }
 
@@ -66,5 +66,9 @@ class MainScreen1State extends ConsumerState<MainScreen1> {
         ),
       ),
     );
+  }
+  
+  void refresh() {
+    setState(() {});
   }
 }

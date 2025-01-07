@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nutrition_ai_app/config/theme/my_colors.dart';
+import 'package:nutrition_ai_app/controllers/user/user_controller.dart';
 
 import '../../providers/user_provider.dart';
 import '../../shared/appbar_with_back.dart';
@@ -19,6 +22,8 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class ProfileScreenState extends ConsumerState<ProfileScreen> {
+  final UserController _con = UserController();
+
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white; // Color inicial del AppBar
   Color _textColor = Colors.black;
@@ -30,6 +35,11 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      _con.init(context, refresh);
+    });
+
     _scrollController.addListener(() {
       // Cambiar el color del AppBar cuando se haga scroll
       setState(() {
@@ -122,6 +132,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                 icon: const Icon(Icons.camera_alt),
                 onPressed: () {
                   _showImagePickerOptions(context);
+                  // _con.showAlertDialog();
                 },
               ),
             ),
@@ -284,7 +295,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
           OptionItem(
             icon: Iconsax.profile_circle,
             title: 'Editar Perfil',
-            link: '/edit-profile',
+            link: EditProfileScreen.name,
           ),
           OptionItem(
             icon: Iconsax.chart_square,
@@ -294,7 +305,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
           OptionItem(
             icon: Iconsax.lock_1,
             title: 'Cambiar Contraseña',
-            link: '/change-password',
+            link: ChangePasswordScreen.name,
           ),
           OptionItem(
             icon: Iconsax.cards,
@@ -363,16 +374,14 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
                 leading: const Icon(Icons.camera_alt),
                 title: const Text("Cámara"),
                 onTap: () {
-                  // Aquí va la lógica para tomar una foto con la cámara
-                  Navigator.pop(context);
+                  _con.selectImage(ImageSource.camera, ref);
                 },
               ),
               ListTile(
                 leading: const Icon(Icons.photo_library),
                 title: const Text("Galería"),
                 onTap: () {
-                  // Aquí va la lógica para elegir una imagen de la galería
-                  Navigator.pop(context);
+                  _con.selectImage(ImageSource.gallery, ref);
                 },
               ),
             ],
@@ -380,5 +389,9 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
         );
       },
     );
+  }
+
+  void refresh() {
+    setState(() {});
   }
 }
