@@ -51,7 +51,7 @@ class MacronutrientSliderWidgetState
     final double remaining = target - consumed;
 
     return Container(
-      margin: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+      margin: const EdgeInsets.only(left: 7, right: 7, bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),

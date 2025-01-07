@@ -7,10 +7,11 @@ import '../../providers/user_provider.dart';
 import '../../shared/appbar_with_back.dart';
 import '../../shared/card_with_links.dart';
 import '../../shared/utils/shared_pref.dart';
+import '../screens.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   static const String name = 'profile_screen';
-  
+
   const ProfileScreen({super.key});
 
   @override
@@ -288,7 +289,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
           OptionItem(
             icon: Iconsax.chart_square,
             title: 'Mis progresos',
-            link: '/statistics',
+            link: ReportsScreen.name,
           ),
           OptionItem(
             icon: Iconsax.lock_1,
@@ -298,7 +299,7 @@ class ProfileScreenState extends ConsumerState<ProfileScreen> {
           OptionItem(
             icon: Iconsax.cards,
             title: 'Métodos de Pago',
-            link: '/payment-methods',
+            link: PaymentMethodsScreen.name,
           ),
         ],
       ),

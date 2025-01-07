@@ -6,6 +6,7 @@ import 'package:nutrition_ai_app/services/plan/plan_service.dart';
 import '../../models/current_plan.dart';
 import '../../models/meal.dart';
 import '../../models/meal_detail.dart';
+import '../../models/plan.dart';
 import '../../providers/meal_provider.dart';
 import '../../providers/plan_provider.dart';
 import '../../services/meal/meal_service.dart';
@@ -33,8 +34,8 @@ class MealController {
 
     _apiService.init(context);
 
-    await getAllMeals();
-    await getCurrentPlan();
+    // await getAllMeals();
+    // await getCurrentPlan();
   }
 
   Future<void> getAllMeals() async {
@@ -149,16 +150,22 @@ class MealController {
         MyToastBar.showSuccess(context!, message);
 
         // Obtener el id del plan seleccionado
-        final CurrentPlan? currentPlan = ref.read(selectedPlanProvider);
+        final CurrentPlan? selectedPlan = ref.read(selectedPlanProvider);
 
-        if (currentPlan != null) {
+        if (selectedPlan != null) {
           print(
-              "MealController::markAsConsumed::currentPlan: ${currentPlan.toJson()}");
+              "MealController::markAsConsumed::currentPlan: ${selectedPlan.toJson()}");
           // Actualizar el plan seleccionado
-          await getPlanById(currentPlan.planId);
+          await getPlanById(selectedPlan.planId);
+          await finishPlan(selectedPlan.planId, true);
         }
         // Actualizar el estado del plan actual
         await getCurrentPlan(date: date);
+
+        final CurrentPlan? currentPlan = ref.read(currentPlanProvider);
+        if (currentPlan != null) {
+          await finishPlan(currentPlan.planId, false);
+        }
         refresh();
       } catch (e) {
         print(e);
@@ -191,7 +198,7 @@ class MealController {
       try {
         final CurrentPlan plan = await _apiPlanService.getCurrentPlan(token);
         ref.read(currentPlanProvider.notifier).state = plan;
-        
+
         if (date != null) {
           // Actualizar el estado de la comida seleccionada
           loadDataMeals(date, ref);
@@ -207,7 +214,39 @@ class MealController {
     }
   }
 
-  // void toggleMealStatus(int mealId) async {
-  //   await markAsConsumed(mealId);
-  // }
+  Future<void> finishPlan(int planId, bool verify) async {
+    final token = await SharedPref().read('token');
+
+    if (token != null) {
+      try {
+        final Map<String, dynamic> data =
+            await _apiPlanService.finishPlan(planId, token);
+        if (data['success'] != null && data['success'] == true) {
+          // MyToastBar.showSuccess(context!, data['message']!);
+        }
+        if (verify) {
+          await getPlanById(planId);
+        }
+        await getPlans();
+      } catch (e) {
+        print(e);
+        // MyToastBar.showError(
+        //     context!, e.toString().replaceFirst('Exception: ', ''));
+      }
+    }
+  }
+
+  Future<void> getPlans() async {
+    final token = await SharedPref().read('token');
+
+    if (token != null) {
+      try {
+        final List<Plan> plans = await _apiPlanService.getPlans(token);
+        ref.read(planProvider.notifier).setPlans(plans);
+        // print("PlanController::getPlans::plans: $plans");
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
 }

@@ -28,7 +28,7 @@ class PlanService {
 
     final response =
         await http.post(url, headers: headers, body: json.encode(data));
-        
+
     if (response.statusCode == 200) {
       // Si la respuesta es exitosa, retornamos los datos
       final data = json.decode(response.body);
@@ -87,7 +87,7 @@ class PlanService {
       throw Exception('Ocurrió un error al obtener el plan actual');
     }
   }
-  
+
   Future<CurrentPlan> getPlanById(int id, String token) async {
     Uri url = Uri.http(_url, '$_api/get-plan/$id');
 
@@ -107,6 +107,32 @@ class PlanService {
     } else {
       // Si ocurre un error, devolvemos el mensaje original
       throw Exception('Ocurrió un error al obtener el plan');
+    }
+  }
+
+  // Finalizar un plan
+  Future<Map<String, dynamic>> finishPlan(int planId, String token) async {
+    Uri url = Uri.http(_url, '$_api/update-plan-status');
+
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final response = await http.post(url,
+        headers: headers, body: json.encode({'plan_id': planId}));
+
+    print("PlanService::finishPlan::response: ${response.body}");
+
+    if (response.statusCode == 200) {
+      // Si la respuesta es exitosa, retornamos los datos
+      final data = json.decode(response.body);
+      print("PlanService::finishPlan::data: $data");
+      return data;
+    } else {
+      // Si ocurre un error, devolvemos el mensaje original
+      throw Exception('Ocurrió un error al finalizar el plan');
     }
   }
 }

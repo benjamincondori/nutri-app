@@ -33,7 +33,7 @@ class PlanController {
     _apiService.init(context);
 
     await getPlans();
-    // await getCurrentPlan();
+    await getCurrentPlan();
   }
 
   Future<void> generatePlan() async {
@@ -64,6 +64,7 @@ class PlanController {
         final response = await _apiService.generatePlan(data, token);
         print("PlanController::generatePlan::response: $response");
         await getPlans();
+        await getCurrentPlan();
         MyToastBar.showSuccess(
             context!, 'Plan de comidas generado correctamente');
         context!.pop();
@@ -89,23 +90,23 @@ class PlanController {
     }
   }
 
-  // Future<void> getCurrentPlan() async {
-  //   final token = await SharedPref().read('token');
+  Future<void> getCurrentPlan() async {
+    final token = await SharedPref().read('token');
 
-  //   if (token != null) {
-  //     try {
-  //       final CurrentPlan plan = await _apiService.getCurrentPlan(token);
-  //       ref.read(currentPlanProvider.notifier).state = plan;
+    if (token != null) {
+      try {
+        final CurrentPlan plan = await _apiService.getCurrentPlan(token);
+        ref.read(currentPlanProvider.notifier).state = plan;
 
-  //       // Actualizar el estado de la comida seleccionada
-  //       loadDataMeals(DateTime.now(), ref);
+        // Actualizar el estado de la comida seleccionada
+        loadDataMeals(DateTime.now(), ref);
 
-  //       print("PlanController::getCurrentPlan::plan: $plan");
-  //     } catch (e) {
-  //       print(e);
-  //     }
-  //   }
-  // }
+        print("PlanController::getCurrentPlan::plan: $plan");
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
 
   Future<void> getPlanById(int id) async {
     final token = await SharedPref().read('token');
@@ -135,6 +136,8 @@ class PlanController {
       print(e);
     }
   }
+  
+  
 }
 
 loadDataMeals(DateTime currentDate, WidgetRef ref) {

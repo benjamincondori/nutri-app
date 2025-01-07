@@ -39,11 +39,13 @@ const appMenuItems = <MenuItem>[
   //   icon: Icons.restaurant,
   // ),
   MenuItem(
-    title: 'Ayuda',
-    subTitle: 'Centro de ayuda',
+    title: 'Alimentos',
+    subTitle: 'Lista de alimentos',
     link: '/theme-changer',
-    icon: Iconsax.lamp_charge,
-    iconSelected: Iconsax.lamp_charge5,
+    // icon: Iconsax.lamp_charge,
+    // iconSelected: Iconsax.lamp_charge5,
+    icon: Icons.fastfood_outlined,
+    iconSelected: Icons.fastfood,
   ),
   MenuItem(
     title: 'Mi Perfil',

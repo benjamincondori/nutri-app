@@ -91,7 +91,6 @@ class PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // loadMealStatus();
     final planDetail = ref.watch(selectedPlanProvider);
     final mealsByDay = groupMealsByDay(planDetail!.meals);
 
@@ -180,8 +179,20 @@ class PlanDetailScreenState extends ConsumerState<PlanDetailScreen> {
                         ),
                       ),
                       const SizedBox(width: 5),
-                      Text(
-                        planDetail.status,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 2,
+                          horizontal: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: planDetail.status.toLowerCase() == 'terminado'
+                              ? Colors.green[100]
+                              : Colors.yellow[100],
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Text(
+                          planDetail.status,
+                        ),
                       ),
                     ],
                   ),

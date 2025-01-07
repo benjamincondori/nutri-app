@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../config/theme/my_colors.dart';
 
@@ -53,10 +54,10 @@ class CustomCardWithLinks extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   onTap: () {
                     if (option.onTap != null) {
-                      option.onTap!(); 
+                      option.onTap!();
                     } else if (option.link != null) {
                       // Navega a la ruta definida
-                      // context.pushNamed(option.link!);
+                      context.pushNamed(option.link!);
                     }
                   },
                   splashColor: MyColors.primarySwatch[50],

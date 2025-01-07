@@ -139,5 +139,15 @@ final GoRouter appRouter = GoRouter(
         ); 
       },
     ),
+    GoRoute(
+      path: '/reports',
+      name: ReportsScreen.name,
+      builder: (context, state) => const ReportsScreen(),
+    ),
+    GoRoute(
+      path: '/payment',
+      name: PaymentMethodsScreen.name,
+      builder: (context, state) => const PaymentMethodsScreen(),
+    ),
   ],
 );
