@@ -3,6 +3,8 @@ import 'package:nutrition_ai_app/screens/reports/daily_calories_report.dart';
 import 'package:nutrition_ai_app/screens/reports/nutrition_report_slider.dart';
 import 'package:nutrition_ai_app/screens/reports/weight_progress_chart.dart';
 
+import '../../config/theme/my_colors.dart';
+import '../../shared/appbar_with_back.dart';
 import '../home/slider.dart';
 
 class ReportsScreen extends StatefulWidget {
@@ -17,10 +19,44 @@ class ReportsScreen extends StatefulWidget {
 class _ReportsScreenState extends State<ReportsScreen> {
   List<Map<String, dynamic>> _plans = [];
 
+  final ScrollController _scrollController = ScrollController();
+  Color _appBarColor = Colors.white;
+  Color _textColor = Colors.black;
+  Color _iconColor = MyColors.primaryColor;
+  Color _iconBackgroundColor = MyColors.primarySwatch[50]!;
+
   @override
   void initState() {
     super.initState();
+
+    // SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+    //   _con.init(context, refresh, ref);
+    // });
+
+    _scrollController.addListener(() {
+      // Cambiar el color del AppBar cuando se haga scroll
+      setState(() {
+        if (_scrollController.position.pixels > 1) {
+          _appBarColor = MyColors.primarySwatch; // Color al hacer scroll
+          _textColor = Colors.white;
+          _iconColor = MyColors.primaryColor;
+          _iconBackgroundColor = Colors.white;
+        } else {
+          _appBarColor = Colors.white; // Color inicial
+          _textColor = Colors.black;
+          _iconColor = MyColors.primaryColor;
+          _iconBackgroundColor = MyColors.primarySwatch[50]!;
+        }
+      });
+    });
+
     _fetchPlans();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose(); // Limpiar el controlador
+    super.dispose();
   }
 
   Future<void> _fetchPlans() async {
@@ -1110,7 +1146,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
   //   // WeightEntry(date: DateTime(2023, 4, 15), weight: 76.9),
   // ];
 
-
   final progresoPeso = [
     {'fecha': '2023-01-01', 'peso': 70.5},
     {'fecha': '2023-01-02', 'peso': 70.0},
@@ -1138,10 +1173,16 @@ class _ReportsScreenState extends State<ReportsScreen> {
     const double targetCalories = 2200;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mi Nutrición'),
+      backgroundColor: Colors.white,
+      appBar: CustomAppBarWithBack(
+        title: 'Mis progresos',
+        backgroundColor: _appBarColor,
+        textColor: _textColor,
+        iconColor: _iconColor,
+        iconBackgroundColor: _iconBackgroundColor,
       ),
       body: SingleChildScrollView(
+        controller: _scrollController,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:nutrition_ai_app/config/constants/environment.dart';
 import 'package:nutrition_ai_app/config/router/app_router.dart';
 import 'package:nutrition_ai_app/config/theme/app_theme.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: '.env');
+  await _setup();
 
   runApp(const ProviderScope(child: MainApp()));
 }
@@ -16,6 +19,11 @@ Future<void> main() async {
 
 // laura.martinez@gmail.com
 // laura123
+
+Future<void> _setup() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = Environment.stripePublishableKey;
+}
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});

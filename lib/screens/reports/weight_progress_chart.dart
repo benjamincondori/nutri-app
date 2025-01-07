@@ -164,9 +164,9 @@ class ProgresoPesoReporte extends StatelessWidget {
 
     double maxPeso =
         pesos.isNotEmpty ? pesos.reduce((a, b) => a > b ? a : b) : 0;
-    double maxY = (maxPeso +
-        20 -
-        (maxPeso % 20)); // Redondear hacia el siguiente múltiplo de 20
+    // double maxY = (maxPeso +
+    //     20 -
+    //     (maxPeso % 20)); // Redondear hacia el siguiente múltiplo de 20
 
     return Card(
       elevation: 4,
@@ -193,7 +193,7 @@ class ProgresoPesoReporte extends StatelessWidget {
                         5, // Intervalo de las líneas horizontales
                     verticalInterval: 1, // Intervalo de las líneas verticales
                     getDrawingHorizontalLine: (value) {
-                      return FlLine(
+                      return const FlLine(
                         color: Colors.grey,
                         strokeWidth: 1,
                         dashArray: [4, 4], // Líneas punteadas horizontales

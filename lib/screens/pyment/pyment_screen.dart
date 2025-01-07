@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nutrition_ai_app/shared/utils/my_toastbar.dart';
 
 import '../../config/theme/my_colors.dart';
+import '../../services/pyment/stripe_service.dart';
 import '../../shared/appbar_with_back.dart';
 
 class PaymentMethodsScreen extends StatefulWidget {
@@ -73,7 +74,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
                 "Utiliza tu tarjeta de crédito o débito para realizar el pago de manera segura.",
             icon: Icons.credit_card,
             onTap: () {
-              // Lógica para redirigir a Stripe
+              StripeService.instance.makePayment();
             },
           ),
           const SizedBox(height: 16.0),
@@ -101,7 +102,6 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
       ),
     );
   }
-
 }
 
 class PaymentMethodCard extends StatelessWidget {
