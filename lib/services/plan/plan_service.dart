@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nutrition_ai_app/models/current_plan.dart';
 import 'package:nutrition_ai_app/models/plan.dart';
+import 'package:nutrition_ai_app/shared/utils/shared_pref.dart';
 
 import '../../config/constants/environment.dart';
 
@@ -134,5 +135,39 @@ class PlanService {
       // Si ocurre un error, devolvemos el mensaje original
       throw Exception('Ocurrió un error al finalizar el plan');
     }
+  }
+
+  Future<List<Map<String, dynamic>>> getDailyCalories() async {
+   // final response = await http.get(Uri.parse(apiUrl));
+    Uri url = Uri.http(_url, '$_api/list-calories');
+    final token = await SharedPref().read('token');
+
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    try {
+       final response = await http.get(url, headers: headers);
+
+      if (response.statusCode == 200) {
+        // Decodificar la respuesta JSON
+        final List<dynamic> responseData = json.decode(response.body);
+
+        // Convertir la lista dinámica en una lista de mapas
+      return responseData.map((item) => {
+        "fecha": item["fecha"],
+        "calorias": item["calorias"],
+        "dia": item["dia_semana"],
+      }).toList();      
+      } else if (response.statusCode == 404) {
+        throw Exception("No se encontraron planes o comidas asociadas.");
+      } else {
+        throw Exception("Error al obtener los datos: ${response.statusCode}");
+      }
+    } catch (e) {
+      print(e);
+    }
+    return [];
   }
 }

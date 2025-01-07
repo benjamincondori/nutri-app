@@ -6,11 +6,13 @@ class DailyCaloriesReport extends StatelessWidget {
   final List<double>
       dailyCalories; // Las calorías de los últimos días (debe incluir al menos 5 días).
   final double targetCalories;
+  final List<String> days;
 
   const DailyCaloriesReport({
     Key? key,
     required this.dailyCalories,
     required this.targetCalories,
+    required this.days,
   }) : super(key: key);
 
   @override
@@ -19,6 +21,11 @@ class DailyCaloriesReport extends StatelessWidget {
     final recentCalories = dailyCalories.length >= 5
         ? dailyCalories.sublist(dailyCalories.length - 5)
         : dailyCalories;
+    
+    final recentDays = days.length >= 5
+        ? days.sublist(days.length - 5)
+        : days;
+
 
     // Calcular el valor máximo dinámico para el eje Y.
     final maxCalories = recentCalories.reduce((a, b) => a > b ? a : b);
@@ -62,14 +69,22 @@ class DailyCaloriesReport extends StatelessWidget {
                         showTitles: true,
                         getTitlesWidget: (value, meta) {
                           // Calcula las fechas para los últimos 5 días.
-                          final date = DateTime.now()
-                              .subtract(Duration(days: 4 - value.toInt()));
-                          String day = DateFormat('EEE', 'es_ES').format(date);
-                          day = day[0].toUpperCase() + day.substring(1);
-                          return Text(
-                            day,
-                            style: const TextStyle(fontSize: 12),
-                          );
+                          // final date = DateTime.now()
+                          //     .subtract(Duration(days: 4 - value.toInt()));
+                          // String day = DateFormat('EEE', 'es_ES').format(date);
+                          // day = day[0].toUpperCase() + day.substring(1);
+                          // return Text(
+                          //   day,
+                          //   style: const TextStyle(fontSize: 12),
+                          // );
+                             if (value.toInt() >= 0 &&
+                              value.toInt() < recentDays.length) {
+                            return Text(
+                              recentDays[value.toInt()],
+                              style: const TextStyle(fontSize: 12),
+                            );
+                          }
+                          return const Text('');
                         },
                       ),
                     ),

@@ -136,7 +136,13 @@ class PlanController {
       print(e);
     }
   }
-  
+
+ Future<List<Map<String, dynamic>>> fetchDailyCalories() async { // Aquí llamas a tu servicio que obtiene la lista de calorías // 
+  //Suponiendo que tu servicio devuelve una lista de mapas con día, calorías y fecha 
+  List<Map<String, dynamic>> calorieList = await _apiService.getDailyCalories(); 
+  return calorieList;
+ }
+ 
   
 }
 

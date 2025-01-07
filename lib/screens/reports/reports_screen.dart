@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nutrition_ai_app/screens/reports/daily_calories_report.dart';
 import 'package:nutrition_ai_app/screens/reports/nutrition_report_slider.dart';
 import 'package:nutrition_ai_app/screens/reports/weight_progress_chart.dart';
+import 'package:nutrition_ai_app/services/plan/plan_service.dart';
 
 import '../../config/theme/my_colors.dart';
 import '../../shared/appbar_with_back.dart';
@@ -18,6 +19,10 @@ class ReportsScreen extends StatefulWidget {
 
 class _ReportsScreenState extends State<ReportsScreen> {
   List<Map<String, dynamic>> _plans = [];
+  final PlanService _nutritionService = PlanService();
+
+  List<double> dailyCalories1 = []; 
+  bool isLoading = true; // Indicador de carga.
 
   final ScrollController _scrollController = ScrollController();
   Color _appBarColor = Colors.white;
@@ -51,6 +56,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
     });
 
     _fetchPlans();
+    _fetchDailyCalories();
   }
 
   @override
@@ -1133,6 +1139,30 @@ class _ReportsScreenState extends State<ReportsScreen> {
       ];
     });
   }
+    Future<void> _fetchDailyCalories() async {
+    try {
+      // Simula llamada a la API.
+    final fetchCaloriesByDay = await _nutritionService.getDailyCalories();
+
+      // Convierte los datos al formato requerido (List<double>).
+      final List<double> calories = fetchCaloriesByDay
+          .map<double>((item) => item['calorias'].toDouble())
+          .toList();
+
+      final List<String> days = fetchCaloriesByDay
+          .map<String>((item) => item['fecha'].toString())
+          .toList();
+      setState(() {
+        dailyCalories1 = calories;
+        isLoading = false; // Finaliza la carga.
+      });
+    } catch (e) {
+      print('Error al obtener calorías: $e');
+      setState(() {
+        isLoading = false; // Finaliza la carga incluso con error.
+      });
+    }
+  }
 
   // Datos de ejemplo para el progreso de peso
   // final List<WeightEntry> weightEntries = [
@@ -1158,20 +1188,69 @@ class _ReportsScreenState extends State<ReportsScreen> {
   final List<double> caloriesData = [1800, 2000, 1500, 2200, 1900];
   final List<String> days = ["Lun", "Mar", "Mié", "Jue", "Vie"];
 
-  @override
-  Widget build(BuildContext context) {
-    // Estos son datos de ejemplo. En una aplicación real, obtendrías estos datos de tu base de datos o API.
-    final List<double> dailyCalories = [
-      2100,
-      2300,
-      1950,
-      2400,
-      2200,
-      1800,
-      2000
-    ];
-    const double targetCalories = 2200;
+  // @override
+  // Widget build(BuildContext context) {
+  //   // Estos son datos de ejemplo. En una aplicación real, obtendrías estos datos de tu base de datos o API.
+  //   final List<double> dailyCalories = [
+  //     2100,
+  //     2300,
+  //     1950,
+  //     2400,
+  //     2200,
+  //     1800,
+  //     2000
+  //   ];
+  //   const double targetCalories = 2200;
 
+  //   return Scaffold(
+  //     backgroundColor: Colors.white,
+  //     appBar: CustomAppBarWithBack(
+  //       title: 'Mis progresos',
+  //       backgroundColor: _appBarColor,
+  //       textColor: _textColor,
+  //       iconColor: _iconColor,
+  //       iconBackgroundColor: _iconBackgroundColor,
+  //     ),
+  //     body: SingleChildScrollView(
+  //       controller: _scrollController,
+  //       child: Padding(
+  //         padding: const EdgeInsets.all(16.0),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             MacronutrientSliderWidget(
+  //               consumedCalories: 200,
+  //               targetCalories: 2200,
+  //               consumedProtein: 30,
+  //               targetProtein: 150,
+  //               consumedCarbs: 100,
+  //               targetCarbs: 300,
+  //               consumedFat: 20,
+  //               targetFat: 70,
+  //             ),
+  //             const SizedBox(height: 24),
+  //             DailyCaloriesReport(
+  //               dailyCalories: dailyCalories,
+  //               targetCalories: targetCalories,
+  //             ),
+  //             _plans.isEmpty
+  //                 ? Center(child: CircularProgressIndicator())
+  //                 : SingleChildScrollView(
+  //                     padding: EdgeInsets.all(16),
+  //                     child: NutritionReportSlider(plans: _plans),
+  //                   ),
+  //             // WeightProgressChart(weightEntries: weightEntries),
+  //             ProgresoPesoReporte(progresoPeso: progresoPeso),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+ @override
+ Widget build(BuildContext context) {
+  const double targetCalories = 3200;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBarWithBack(
@@ -1181,40 +1260,50 @@ class _ReportsScreenState extends State<ReportsScreen> {
         iconColor: _iconColor,
         iconBackgroundColor: _iconBackgroundColor,
       ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              MacronutrientSliderWidget(
-                consumedCalories: 200,
-                targetCalories: 2200,
-                consumedProtein: 30,
-                targetProtein: 150,
-                consumedCarbs: 100,
-                targetCarbs: 300,
-                consumedFat: 20,
-                targetFat: 70,
-              ),
-              const SizedBox(height: 24),
-              DailyCaloriesReport(
-                dailyCalories: dailyCalories,
-                targetCalories: targetCalories,
-              ),
-              _plans.isEmpty
-                  ? Center(child: CircularProgressIndicator())
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(16),
-                      child: NutritionReportSlider(plans: _plans),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              controller: _scrollController,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MacronutrientSliderWidget(
+                      consumedCalories: 200,
+                      targetCalories: 2200,
+                      consumedProtein: 30,
+                      targetProtein: 150,
+                      consumedCarbs: 100,
+                      targetCarbs: 300,
+                      consumedFat: 20,
+                      targetFat: 70,
                     ),
-              // WeightProgressChart(weightEntries: weightEntries),
-              ProgresoPesoReporte(progresoPeso: progresoPeso),
-            ],
-          ),
-        ),
-      ),
+                    const SizedBox(height: 24),
+                    dailyCalories1.isNotEmpty
+                        ? DailyCaloriesReport(
+                            dailyCalories: dailyCalories1,
+                            targetCalories: targetCalories,
+                            days: days,
+                          )
+                        : Center(
+                            child: Text(
+                              'No hay datos disponibles.',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                    const SizedBox(height: 24),
+                    _plans.isEmpty
+                        ? Center(child: CircularProgressIndicator())
+                        : SingleChildScrollView(
+                            padding: EdgeInsets.all(16),
+                            child: NutritionReportSlider(plans: _plans),
+                          ),
+                    ProgresoPesoReporte(progresoPeso: progresoPeso),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }
